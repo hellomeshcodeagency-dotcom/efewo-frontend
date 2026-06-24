@@ -355,7 +355,7 @@
 
         function init() {
             const params = new URLSearchParams(window.location.search);
-            paymentRef = params.get('ref') || 'WALK-IN-' + Date.now();
+            paymentRef = params.get('ref') || '';
             userEmail = params.get('email') || '';
             if (userEmail) {
                 document.getElementById('form-email').value = userEmail;
@@ -384,7 +384,7 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Submitting...';
 
             const formData = new FormData(this);
-            const payload = { payment_reference: paymentRef };
+            const payload = { payment_reference: paymentRef || null };
             formData.forEach((value, key) => {
                 if (key === 'reg_cac' || key === 'reg_state' || key === 'reg_napps') {
                     payload[key] = true;
