@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Verification | EESP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#0F52BA',
+                            darkblue: '#0A3680',
+                            gold: '#D4AF37'
+                        }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="font-sans bg-slate-50 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-tr from-brand-blue to-brand-darkblue rounded-xl flex items-center justify-center text-white">
+                    <i class="fa-solid fa-graduation-cap text-sm"></i>
+                </div>
+                <div>
+                    <span class="text-base font-extrabold tracking-tight text-brand-darkblue block leading-none">EFEWO</span>
+                    <span class="text-[9px] tracking-widest font-semibold text-brand-gold uppercase block">Education Support Project</span>
+                </div>
+            </a>
+            <a href="index.html" class="text-xs text-slate-500 hover:text-brand-blue font-medium transition-colors">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Website
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="flex-1 flex items-center justify-center px-4 py-16">
+        <div class="w-full max-w-md">
+
+            <!-- VERIFYING STATE -->
+            <div id="state-verifying" class="bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center space-y-5 fade-in">
+                <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fa-solid fa-circle-notch text-brand-blue text-4xl spin"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-extrabold text-brand-darkblue">Verifying Your Payment</h2>
+                    <p class="text-sm text-slate-500 mt-1">Please wait while we confirm your transaction with Paystack...</p>
+                </div>
+                <div class="bg-slate-50 rounded-xl p-3 text-xs text-slate-400 font-mono break-all" id="ref-display"></div>
+            </div>
+
+            <!-- SUCCESS: FORM PURCHASE -->
+            <div id="state-success-form" class="hidden bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center space-y-5 fade-in">
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-brand-darkblue">Payment Successful!</h2>
+                    <p class="text-sm text-slate-500 mt-1">Your ₦5,000 form purchase has been confirmed.</p>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Amount Paid</span>
+                        <span class="font-bold text-slate-800">₦5,000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Payment Reference</span>
+                        <span class="font-bold text-slate-800 font-mono" id="success-ref"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Status</span>
+                        <span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Verified ✓</span>
+                    </div>
+                </div>
+                <div class="bg-brand-softgold/30 border border-brand-gold/30 rounded-xl p-3 text-xs text-brand-darkblue font-medium">
+                    <i class="fa-solid fa-info-circle mr-1 text-brand-gold"></i>
+                    Your membership form is now unlocked. Click below to fill and submit it.
+                </div>
+                <a id="fill-form-btn" href="index.html#membership" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
+                    <i class="fa-solid fa-id-card mr-2"></i> Fill Your Membership Form
+                </a>
+                <p class="text-[10px] text-slate-400">Your form is linked to this reference — keep it safe</p>
+            </div>
+
+            <!-- SUCCESS: YEARLY DUES -->
+            <div id="state-success-dues" class="hidden bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center space-y-5 fade-in">
+                <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-brand-darkblue">Dues Payment Confirmed!</h2>
+                    <p class="text-sm text-slate-500 mt-1">Your ₦10,000 yearly membership dues have been received.</p>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-2 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Amount Paid</span>
+                        <span class="font-bold text-slate-800">₦10,000</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Payment Reference</span>
+                        <span class="font-bold text-slate-800 font-mono" id="dues-ref"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Valid Until</span>
+                        <span class="font-bold text-slate-800" id="dues-year"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Status</span>
+                        <span class="bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">Active ✓</span>
+                    </div>
+                </div>
+                <a href="index.html" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
+                    <i class="fa-solid fa-house mr-2"></i> Back to EESP Website
+                </a>
+            </div>
+
+            <!-- FAILED STATE -->
+            <div id="state-failed" class="hidden bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center space-y-5 fade-in">
+                <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fa-solid fa-circle-xmark text-red-500 text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-brand-darkblue">Payment Not Confirmed</h2>
+                    <p class="text-sm text-slate-500 mt-1" id="fail-message">We could not verify your payment. Please try again or contact us.</p>
+                </div>
+                <div class="space-y-3">
+                    <a href="index.html#membership" class="block w-full bg-brand-blue text-white text-sm font-bold py-3.5 rounded-xl hover:bg-brand-darkblue shadow transition-all">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Try Again
+                    </a>
+                    <a href="https://wa.me/2349070732844" target="_blank" class="block w-full bg-white border border-slate-200 text-slate-700 text-sm font-bold py-3.5 rounded-xl hover:bg-slate-50 shadow-sm transition-all">
+                        <i class="fa-brands fa-whatsapp mr-2 text-emerald-500"></i> Contact Support on WhatsApp
+                    </a>
+                </div>
+                <p class="text-[10px] text-slate-400">Reference: <span class="font-mono" id="fail-ref"></span></p>
+            </div>
+
+            <!-- NO REFERENCE STATE -->
+            <div id="state-no-ref" class="hidden bg-white rounded-3xl shadow-xl border border-slate-200 p-10 text-center space-y-5 fade-in">
+                <div class="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-4xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-extrabold text-brand-darkblue">No Payment Reference Found</h2>
+                    <p class="text-sm text-slate-500 mt-1">This page is only accessible after completing a Paystack payment.</p>
+                </div>
+                <a href="index.html#membership" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
+                    <i class="fa-solid fa-arrow-left mr-2"></i> Go to Membership Page
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-[11px] text-slate-400">
+        <span><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Secured by Paystack · PCI-DSS Compliant</span>
+        <span class="mx-3 text-slate-200">|</span>
+        <span>&copy; 2026 Efewo Education Support Project</span>
+    </footer>
+
+    <script>
+        // ====== CONFIG — UPDATE THIS ======
+        const API_BASE = 'https://efewo-backend.onrender.com/api'; // ← your Render backend URL
+        // ==================================
+
+        function showState(id) {
+            ['state-verifying', 'state-success-form', 'state-success-dues', 'state-failed', 'state-no-ref']
+                .forEach(s => {
+                    const el = document.getElementById(s);
+                    if (el) el.classList.toggle('hidden', s !== id);
+                });
+        }
+
+        async function verifyPayment() {
+            const params = new URLSearchParams(window.location.search);
+            const reference = params.get('reference') || params.get('trxref');
+
+            if (!reference) {
+                showState('state-no-ref');
+                return;
+            }
+
+            // Show reference while verifying
+            const refDisplay = document.getElementById('ref-display');
+            if (refDisplay) refDisplay.textContent = 'Ref: ' + reference;
+
+            try {
+                const res = await fetch(`${API_BASE}/payments/verify/${reference}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    if (data.payment_type === 'form_purchase') {
+                        // Show form purchase success
+                        document.getElementById('success-ref').textContent = reference;
+                        // Link to membership section with reference in URL so form auto-unlocks
+                        document.getElementById('fill-form-btn').href = `index.html?reference=${reference}#membership`;
+                        showState('state-success-form');
+
+                    } else if (data.payment_type === 'yearly_dues') {
+                        // Show yearly dues success
+                        document.getElementById('dues-ref').textContent = reference;
+                        document.getElementById('dues-year').textContent = 'Dec 31, ' + new Date().getFullYear();
+                        showState('state-success-dues');
+                    }
+                } else {
+                    document.getElementById('fail-message').textContent = data.message || 'Payment verification failed.';
+                    document.getElementById('fail-ref').textContent = reference;
+                    showState('state-failed');
+                }
+
+            } catch (err) {
+                console.error('Verification error:', err);
+                document.getElementById('fail-message').textContent = 'Network error. Please check your connection and try again.';
+                document.getElementById('fail-ref').textContent = reference;
+                showState('state-failed');
+            }
+        }
+
+        verifyPayment();
+    </script>
+</body>
+</html>

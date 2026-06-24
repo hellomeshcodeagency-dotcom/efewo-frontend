@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Registration Form | EESP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { blue: '#0F52BA', darkblue: '#0A3680', gold: '#D4AF37' }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        input, select, textarea { font-family: 'Plus Jakarta Sans', sans-serif; }
+        table input[type="number"] { width: 40px; font-size: 12px; text-align: center; padding: 4px 2px; }
+        .section-header { background: linear-gradient(135deg, #0F52BA 0%, #0A3680 100%); }
+    </style>
+</head>
+<body class="font-sans bg-slate-100 min-h-screen">
+
+    <!-- Header -->
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
+        <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-tr from-brand-blue to-brand-darkblue rounded-lg flex items-center justify-center text-white">
+                    <i class="fa-solid fa-graduation-cap text-xs"></i>
+                </div>
+                <div>
+                    <span class="text-sm font-extrabold tracking-tight text-brand-darkblue">EFEWO</span>
+                    <span class="text-[9px] tracking-widest font-semibold text-brand-gold uppercase ml-1">ESP</span>
+                </div>
+            </a>
+            <span class="text-xs text-slate-500 font-medium"><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Secure Form</span>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto px-4 py-6 pb-16" id="main-content">
+
+
+
+        <!-- Form Title -->
+        <div class="section-header text-white rounded-2xl p-5 mb-5 shadow-md">
+            <h1 class="text-lg font-extrabold"><i class="fa-solid fa-school mr-2 text-yellow-300"></i> EESP School Registration Form</h1>
+            <p class="text-xs text-blue-200 mt-1">Fill in all required fields marked with <span class="text-red-300 font-bold">*</span> and submit. Registration fee: <strong class="text-yellow-300">₦5,000</strong></p>
+        </div>
+
+        <form id="reg-form" class="space-y-5">
+
+            <!-- SECTION A: School Info -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
+                    <h2 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-school mr-2 text-brand-blue"></i>Section A — School Information</h2>
+                </div>
+                <div class="p-5 space-y-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-600 block mb-1">School Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="school_name" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-600 block mb-1">School Address <span class="text-red-500">*</span></label>
+                        <textarea name="school_address" required rows="2" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Year Established <span class="text-red-500">*</span></label>
+                            <input type="number" name="year_established" required placeholder="e.g. 2005" min="1900" max="2026" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Nature of School <span class="text-red-500">*</span></label>
+                            <select name="nature_of_school" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                                <option value="">Select type</option>
+                                <option>Nursery Only</option>
+                                <option>Primary Only</option>
+                                <option>Nursery & Primary</option>
+                                <option>Secondary Only</option>
+                                <option>Nursery, Primary & Secondary</option>
+                                <option>Technical/Vocational</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Local Government Area <span class="text-red-500">*</span></label>
+                            <input type="text" name="lga" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">State <span class="text-red-500">*</span></label>
+                            <input type="text" name="state" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Email <span class="text-red-500">*</span></label>
+                            <input type="email" name="email" required id="form-email" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">WhatsApp <span class="text-red-500">*</span></label>
+                            <input type="tel" name="whatsapp" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Proprietor's Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="proprietor_name" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-600 block mb-1">Proprietor's Phone <span class="text-red-500">*</span></label>
+                            <input type="tel" name="proprietor_phone" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION B: Enrollment -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
+                    <h2 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-users mr-2 text-brand-blue"></i>Section B — Student Enrollment (M = Male, F = Female)</h2>
+                </div>
+                <div class="p-5 space-y-5">
+
+                    <!-- Nursery -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Nursery</h3>
+                        <div class="overflow-x-auto">
+                            <table class="border-collapse text-[11px] w-full">
+                                <thead>
+                                    <tr class="bg-blue-50">
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">KG1/ECCD</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">KG2/ECCD</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Nursery 1</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Nursery 2</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Nursery 3</th>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="kg1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="kg1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="kg2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="kg2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="n1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="n1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="n2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="n2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="n3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="n3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Primary -->
+                    <div>
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Primary</h3>
+                        <div class="overflow-x-auto">
+                            <table class="border-collapse text-[11px] w-full">
+                                <thead>
+                                    <tr class="bg-blue-50">
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 1</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 2</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 3</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 4</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 5</th>
+                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 6</th>
+                                    </tr>
+                                    <tr class="bg-slate-50">
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p4_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p4_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p5_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p5_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p6_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        <td class="border border-slate-300 p-1"><input type="number" name="p6_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Secondary -->
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Junior Secondary School</h3>
+                            <div class="overflow-x-auto">
+                                <table class="border-collapse text-[11px]">
+                                    <thead>
+                                        <tr class="bg-blue-50">
+                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">JSS 1</th>
+                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">JSS 2</th>
+                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">JSS 3</th>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="jss1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="jss1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="jss2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="jss2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="jss3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="jss3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Senior Secondary School</h3>
+                            <div class="overflow-x-auto">
+                                <table class="border-collapse text-[11px]">
+                                    <thead>
+                                        <tr class="bg-blue-50">
+                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">SS 1</th>
+                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">SS 2</th>
+                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">SS 3</th>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="ss1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="ss1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="ss2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="ss2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="ss3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" name="ss3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION C: Professional Registration -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
+                    <h2 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-certificate mr-2 text-brand-blue"></i>Section C — Professional Registration</h2>
+                </div>
+                <div class="p-5">
+                    <p class="text-xs text-slate-500 mb-3">Tick all that apply to your school</p>
+                    <div class="space-y-3">
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="checkbox" name="reg_cac" class="w-5 h-5 rounded accent-blue-600">
+                            <div>
+                                <span class="text-sm font-semibold text-slate-700 block">CAC</span>
+                                <span class="text-xs text-slate-400">Corporate Affairs Commission</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="checkbox" name="reg_state" class="w-5 h-5 rounded accent-blue-600">
+                            <div>
+                                <span class="text-sm font-semibold text-slate-700 block">State Mode Registration</span>
+                                <span class="text-xs text-slate-400">State Ministry of Education</span>
+                            </div>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="checkbox" name="reg_napps" class="w-5 h-5 rounded accent-blue-600">
+                            <div>
+                                <span class="text-sm font-semibold text-slate-700 block">NAPPS</span>
+                                <span class="text-xs text-slate-400">National Association of Proprietors of Private Schools</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error message -->
+            <div id="form-error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 font-medium hidden">
+                <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                <span id="form-error-text"></span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submit-btn" class="w-full bg-brand-blue text-white text-base font-bold py-4 rounded-2xl hover:bg-brand-darkblue shadow-lg transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane"></i>
+                Submit Registration Form
+            </button>
+            <p class="text-center text-xs text-slate-400"><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Your data is securely saved</p>
+
+        </form>
+
+        <!-- Success Screen -->
+        <div id="success-screen" class="hidden text-center py-12 space-y-5">
+            <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+                <i class="fa-solid fa-circle-check text-emerald-500 text-5xl"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-brand-darkblue">Registration Submitted!</h2>
+            <p class="text-sm text-slate-600 max-w-sm mx-auto">Your school registration has been received successfully. The EESP team will review and get back to you.</p>
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-2 text-xs max-w-sm mx-auto">
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Form ID</span>
+                    <span class="font-bold text-slate-800" id="success-form-id"></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-500">Status</span>
+                    <span class="bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">Pending Review</span>
+                </div>
+            </div>
+            <a href="index.html" class="inline-block bg-brand-blue text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-darkblue transition-all shadow">
+                <i class="fa-solid fa-house mr-2"></i> Back to EESP Website
+            </a>
+        </div>
+
+    </main>
+
+    <script>
+        const API_BASE = 'https://efewo-backend.onrender.com/api';
+        const FORMSPREE = 'https://formspree.io/f/mrewbbko';
+
+        let paymentRef = '';
+        let userEmail = '';
+
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            paymentRef = params.get('ref') || 'WALK-IN-' + Date.now();
+            userEmail = params.get('email') || '';
+            if (userEmail) {
+                document.getElementById('form-email').value = userEmail;
+            }
+        }
+
+        function applyManualRef() {}
+
+        function showError(msg) {
+            const el = document.getElementById('form-error');
+            document.getElementById('form-error-text').textContent = msg;
+            el.classList.remove('hidden');
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function hideError() {
+            document.getElementById('form-error').classList.add('hidden');
+        }
+
+        document.getElementById('reg-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideError();
+
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Submitting...';
+
+            const formData = new FormData(this);
+            const payload = { payment_reference: paymentRef };
+            formData.forEach((value, key) => {
+                if (key === 'reg_cac' || key === 'reg_state' || key === 'reg_napps') {
+                    payload[key] = true;
+                } else {
+                    payload[key] = value;
+                }
+            });
+            // Unchecked checkboxes don't appear in FormData, so default to false
+            if (!payload.reg_cac) payload.reg_cac = false;
+            if (!payload.reg_state) payload.reg_state = false;
+            if (!payload.reg_napps) payload.reg_napps = false;
+
+            try {
+                // 1. Save to backend
+                const res = await fetch(`${API_BASE}/membership/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // 2. Send email via Formspree
+                    try {
+                        await fetch(FORMSPREE, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                _subject: `New EESP Registration — ${payload.school_name}`,
+                                'Form ID': '#' + data.form_id,
+                                'Payment Ref': paymentRef,
+                                'School Name': payload.school_name,
+                                'Address': payload.school_address,
+                                'Year Est.': payload.year_established,
+                                'Nature': payload.nature_of_school,
+                                'LGA': payload.lga,
+                                'State': payload.state,
+                                'Email': payload.email,
+                                'WhatsApp': payload.whatsapp,
+                                'Proprietor': payload.proprietor_name,
+                                'Proprietor Phone': payload.proprietor_phone,
+                                'CAC': payload.reg_cac ? 'Yes' : 'No',
+                                'State Reg': payload.reg_state ? 'Yes' : 'No',
+                                'NAPPS': payload.reg_napps ? 'Yes' : 'No',
+                            })
+                        });
+                    } catch(e) { console.error('Formspree error', e); }
+
+                    // Show success
+                    document.getElementById('reg-form').classList.add('hidden');
+                    document.getElementById('success-screen').classList.remove('hidden');
+                    document.getElementById('success-form-id').textContent = '#' + data.form_id;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    showError(data.message || 'Submission failed. Please try again.');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Submit Registration Form';
+                }
+            } catch(e) {
+                showError('Network error. Please check your connection and try again.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Submit Registration Form';
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>
