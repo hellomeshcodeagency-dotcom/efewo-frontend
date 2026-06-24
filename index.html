@@ -1059,7 +1059,7 @@
                 <div class="text-center space-y-2">
                     <div class="w-16 h-16 bg-brand-darkblue rounded-2xl flex items-center justify-center text-white mx-auto text-3xl"><i class="fa-solid fa-lock"></i></div>
                     <h2 class="text-xl font-black text-brand-darkblue">Admin Portal</h2>
-                    <p class="text-xs text-slate-400">Enter your ADMIN_SECRET_KEY from Render to access the dashboard</p>
+                    <p class="text-xs text-slate-400">Enter your admin password to access the dashboard</p>
                 </div>
                 <input type="password" x-model="adminKey" @keydown.enter="verifyAdmin()" placeholder="Enter admin secret key" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
                 <button @click="verifyAdmin()" class="w-full bg-brand-blue text-white py-3.5 rounded-xl font-bold hover:bg-brand-darkblue transition-all flex items-center justify-center gap-2">
@@ -1639,19 +1639,28 @@
                     this.adminError = '';
                     this.adminLoading = true;
                     try {
-                        const res = await fetch(`${API_BASE}/membership/stats`, {
-                            headers: { 'x-admin-key': this.adminKey }
+                        // First ping to verify key
+                        const pingRes = await fetch(`${API_BASE}/membership/ping`, {
+                            headers: { 'x-admin-key': this.adminKey.trim() }
                         });
-                        const data = await res.json();
-                        if (data.success) {
+                        const pingData = await pingRes.json();
+
+                        if (pingData.success) {
+                            // Key correct — now load full dashboard
+                            const statsRes = await fetch(`${API_BASE}/membership/stats`, {
+                                headers: { 'x-admin-key': this.adminKey.trim() }
+                            });
+                            const statsData = await statsRes.json();
                             this.adminAuthed = true;
-                            this.adminStats = data.stats;
+                            if (statsData.success) this.adminStats = statsData.stats;
                             await this.loadAdminData();
                         } else {
-                            this.adminError = 'Invalid admin key. Check your Render ADMIN_SECRET_KEY env variable.';
+                            this.adminError = pingData.message === 'ADMIN_SECRET_KEY not set on server'
+                                ? 'Admin password not configured. Please set it up first.'
+                                : 'Incorrect password. Please try again.';
                         }
                     } catch (e) {
-                        this.adminError = 'Connection failed. Make sure your Render backend is running.';
+                        this.adminError = 'Connection failed. Please try again.';
                     }
                     this.adminLoading = false;
                 },
