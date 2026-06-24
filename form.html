@@ -439,7 +439,7 @@
                     document.getElementById('success-form-id').textContent = '#' + data.form_id;
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    showError(data.message || 'Submission failed. Please try again.');
+                    showError(data.message + (data.detail ? ' — ' + data.detail : ''));
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Submit Registration Form';
                 }
