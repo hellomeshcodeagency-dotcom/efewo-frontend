@@ -92,7 +92,7 @@
                     <i class="fa-solid fa-info-circle mr-1 text-brand-gold"></i>
                     Your membership form is now unlocked. Click below to fill and submit it.
                 </div>
-                <a id="fill-form-btn" href="index.html#membership" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
+                <a id="fill-form-btn" href="form.html" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
                     <i class="fa-solid fa-id-card mr-2"></i> Fill Your Membership Form
                 </a>
                 <p class="text-[10px] text-slate-400">Your form is linked to this reference — keep it safe</p>
@@ -140,7 +140,7 @@
                     <p class="text-sm text-slate-500 mt-1" id="fail-message">We could not verify your payment. Please try again or contact us.</p>
                 </div>
                 <div class="space-y-3">
-                    <a href="index.html#membership" class="block w-full bg-brand-blue text-white text-sm font-bold py-3.5 rounded-xl hover:bg-brand-darkblue shadow transition-all">
+                    <a href="form.html" class="block w-full bg-brand-blue text-white text-sm font-bold py-3.5 rounded-xl hover:bg-brand-darkblue shadow transition-all">
                         <i class="fa-solid fa-rotate-right mr-2"></i> Try Again
                     </a>
                     <a href="https://wa.me/2349070732844" target="_blank" class="block w-full bg-white border border-slate-200 text-slate-700 text-sm font-bold py-3.5 rounded-xl hover:bg-slate-50 shadow-sm transition-all">
@@ -159,7 +159,7 @@
                     <h2 class="text-xl font-extrabold text-brand-darkblue">No Payment Reference Found</h2>
                     <p class="text-sm text-slate-500 mt-1">This page is only accessible after completing a Paystack payment.</p>
                 </div>
-                <a href="index.html#membership" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
+                <a href="form.html" class="block w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all">
                     <i class="fa-solid fa-arrow-left mr-2"></i> Go to Membership Page
                 </a>
             </div>
@@ -209,7 +209,7 @@
                         // Show form purchase success
                         document.getElementById('success-ref').textContent = reference;
                         // Link to membership section with reference in URL so form auto-unlocks
-                        document.getElementById('fill-form-btn').href = `index.html?reference=${reference}#membership`;
+                        document.getElementById('fill-form-btn').href = `form.html?ref=${reference}`;
                         showState('state-success-form');
 
                     } else if (data.payment_type === 'yearly_dues') {
