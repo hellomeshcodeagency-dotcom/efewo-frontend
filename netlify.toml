@@ -1,0 +1,16 @@
+[[redirects]]
+  from = "/form.html"
+  to = "/form.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/payment-callback.html"
+  to = "/payment-callback.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
