@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Registration Form | EESP</title>
+    <title>Efewo Education Support Project (EESP) | Supporting Education, Empowering Futures</title>
+    <meta name="description" content="EESP is a premier NGO dedicated to structural school development, external examination fee support (SSCE, NECO, NABTEB), and educational grants across Nigeria.">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,442 +16,1795 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { blue: '#0F52BA', darkblue: '#0A3680', gold: '#D4AF37' }
+                        brand: {
+                            blue: '#0F52BA',
+                            darkblue: '#0A3680',
+                            gold: '#D4AF37',
+                            softgold: '#F4E8C1',
+                            accent: '#38BDF8'
+                        }
                     },
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
                 }
             }
         }
     </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <!-- Paystack Inline JS -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+
     <style>
-        input, select, textarea { font-family: 'Plus Jakarta Sans', sans-serif; }
-        table input[type="number"] { width: 40px; font-size: 12px; text-align: center; padding: 4px 2px; }
-        .section-header { background: linear-gradient(135deg, #0F52BA 0%, #0A3680 100%); }
+        .glassmorphism { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .text-gradient { background: linear-gradient(135deg,#0F52BA 0%,#0A3680 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gold-gradient { background: linear-gradient(135deg,#D4AF37 0%,#AA7C11 100%); }
+        
+        /* Modal backdrop */
+        .modal-bg { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+        
+        /* Step indicator */
+        .step-active { background: #0F52BA; color: white; }
+        .step-done { background: #10b981; color: white; }
+        .step-inactive { background: #e2e8f0; color: #94a3b8; }
+
+        /* Form scrollable */
+        .form-scroll { max-height: 80vh; overflow-y: auto; }
+        .form-scroll::-webkit-scrollbar { width: 4px; }
+        .form-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Mobile fixes */
+        @media (max-width: 640px) {
+            .hero-btn { width: 100%; text-align: center; }
+            .reveal-left, .reveal-right { transform: none !important; opacity: 1 !important; }
+            table input[type="number"] { width: 36px; font-size: 11px; padding: 2px; }
+            .form-scroll { max-height: 75vh; }
+        }
+
+        @media (max-width: 768px) {
+            .glassmorphism { backdrop-filter: blur(8px); }
+        }
     </style>
 </head>
-<body class="font-sans bg-slate-100 min-h-screen">
+<body class="font-sans bg-slate-50 text-slate-800 antialiased overflow-x-hidden"
+      x-data="eespApp()"
+      x-init="init()">
 
-    <!-- Header -->
-    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
-        <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-            <a href="index.html" class="flex items-center gap-2">
-                <img src="logo.jpeg" class="w-9 h-9 rounded-lg object-cover" alt="EESP Logo">
+    <!-- ==================== TOP ACCENT BANNER ==================== -->
+    <div class="bg-brand-darkblue text-white text-xs py-2 px-3 flex justify-between items-center z-50 relative overflow-hidden">
+        <div class="flex items-center gap-4">
+            <span><i class="fa-solid fa-phone text-brand-gold mr-1"></i> 08036606800</span>
+            <span class="hidden md:inline"><i class="fa-solid fa-location-dot text-brand-gold mr-1"></i> Kurudu, FCT, Abuja</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="https://wa.me/2349070732844" target="_blank" class="hover:text-brand-gold transition-colors"><i class="fa-brands fa-whatsapp text-green-400 font-bold"></i> Live Chat</a>
+            <span class="text-slate-400">|</span>
+            <button @click="adminOpen = !adminOpen" class="text-xs bg-blue-900/60 px-2 py-0.5 rounded border border-blue-700 hover:bg-brand-gold hover:text-brand-darkblue transition-all"><i class="fa-solid fa-lock mr-1"></i> Portal Access</button>
+        </div>
+    </div>
+
+    <!-- ==================== NAVIGATION ==================== -->
+    <nav class="sticky top-0 glassmorphism border-b border-slate-200/80 shadow-sm z-40" x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-3">
+                <img src="logo.jpeg" class="w-11 h-11 rounded-xl object-cover shadow-md" alt="EESP Logo">
                 <div>
-                    <span class="text-sm font-extrabold tracking-tight text-brand-darkblue">EFEWO</span>
-                    <span class="text-[9px] tracking-widest font-semibold text-brand-gold uppercase ml-1">ESP</span>
+                    <span class="text-xl font-extrabold tracking-tight text-brand-darkblue block leading-none">EFEWO</span>
+                    <span class="text-[10px] tracking-widest font-semibold text-brand-gold uppercase block mt-1">Education Support Project</span>
                 </div>
             </a>
-            <span class="text-xs text-slate-500 font-medium"><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Secure Form</span>
+
+            <div class="hidden lg:flex items-center gap-7 font-medium text-slate-600 text-sm">
+                <a href="#about" class="hover:text-brand-blue transition-colors">About Us</a>
+                <a href="#aim" class="hover:text-brand-blue transition-colors">Our Aim</a>
+                <a href="#programs" class="hover:text-brand-blue transition-colors">Programs</a>
+                <a href="#execution" class="hover:text-brand-blue transition-colors">School Execution</a>
+                <a href="#exams" class="hover:text-brand-blue transition-colors">Exam Support</a>
+                <a href="#membership" class="hover:text-brand-blue transition-colors">Membership</a>
+                <a href="#donations" class="hover:text-brand-blue transition-colors">Donate</a>
+                <a href="#gallery" class="hover:text-brand-blue transition-colors">Gallery</a>
+                <a href="#contact" class="hover:text-brand-blue transition-colors">Contact</a>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-3">
+                <a href="#membership" class="bg-brand-blue text-white text-sm px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-600/20 hover:bg-brand-darkblue transition-all duration-200 transform hover:-translate-y-0.5">Join Now</a>
+            </div>
+
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-slate-600 focus:outline-none">
+                <i class="fa-solid text-2xl" :class="mobileMenuOpen ? 'fa-xmark' : 'fa-bars'"></i>
+            </button>
+        </div>
+
+        <div x-show="mobileMenuOpen" x-transition class="lg:hidden border-t border-slate-100 bg-white px-4 py-4 space-y-2 font-medium shadow-xl">
+            <a href="#about" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">About Us</a>
+            <a href="#aim" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">Our Aim</a>
+            <a href="#programs" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">Programs</a>
+            <a href="#execution" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">School Execution</a>
+            <a href="#exams" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">Exam Support</a>
+            <a href="#membership" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">Membership</a>
+            <a href="#donations" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">Donate</a>
+            <a href="#contact" @click="mobileMenuOpen = false" class="block py-2.5 px-3 rounded-lg hover:bg-slate-50 text-slate-700">Contact</a>
+            <div class="pt-4 border-t border-slate-100">
+                <a href="#membership" @click="mobileMenuOpen = false" class="w-full text-center bg-brand-blue text-white py-2.5 rounded-lg text-sm font-semibold shadow block">Join Now</a>
+            </div>
         </div>
     </nav>
 
-    <main class="max-w-3xl mx-auto px-4 py-6 pb-16" id="main-content">
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="relative bg-slate-900 overflow-hidden min-h-[90vh] flex items-center py-12 md:py-20">
+        <div class="absolute inset-0 z-0 opacity-40 mix-blend-overlay bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=1920');"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/90 to-transparent z-0"></div>
+        <div class="absolute top-20 right-10 opacity-10 animate-bounce pointer-events-none hidden lg:block"><i class="fa-solid fa-book-open text-9xl text-white"></i></div>
+        <div class="absolute bottom-16 right-1/4 opacity-10 animate-pulse pointer-events-none hidden lg:block"><i class="fa-solid fa-atom text-8xl text-white"></i></div>
 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 relative grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="lg:col-span-7 space-y-6 reveal-left">
+                <span class="inline-flex items-center gap-2 bg-brand-blue/20 border border-brand-blue/30 text-brand-accent px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <i class="fa-solid fa-star-of-life animate-spin text-[10px]"></i> Educational Empowerment Initiative
+                </span>
+                <h1 class="text-3xl sm:text-4xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight">
+                    Supporting Education, <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-brand-gold">Empowering Futures</span>
+                </h1>
+                <p class="text-slate-300 text-base max-w-2xl font-light leading-relaxed">
+                    Helping students, parents, schools, and communities across Nigeria achieve long-term educational success and infrastructural transformation.
+                </p>
+                <div class="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
+                    <a href="#membership" class="bg-brand-blue text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-600/30 hover:bg-brand-darkblue transition-all text-center">Become a Member</a>
+                    <a href="#donations" class="bg-white text-brand-darkblue px-6 py-3 rounded-xl font-semibold hover:bg-slate-100 transition-all text-center">Donate Now</a>
+                    <a href="#execution" class="border border-white/20 text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/5 transition-all text-center">Apply For Support</a>
+                </div>
+            </div>
 
-
-        <!-- Form Title -->
-        <div class="section-header text-white rounded-2xl p-5 mb-5 shadow-md">
-            <h1 class="text-lg font-extrabold"><i class="fa-solid fa-school mr-2 text-yellow-300"></i> EESP School Registration Form</h1>
-            <p class="text-xs text-blue-200 mt-1">Fill in all required fields marked with <span class="text-red-300 font-bold">*</span> and submit. Registration fee: <strong class="text-yellow-300">₦5,000</strong></p>
+            <div class="lg:col-span-5 reveal-right hidden lg:block">
+                <div class="glassmorphism p-8 rounded-3xl border border-white/20 shadow-2xl relative overflow-hidden text-slate-800">
+                    <div class="absolute top-0 right-0 gold-gradient w-24 h-24 rounded-bl-full opacity-20"></div>
+                    <h3 class="text-xl font-bold text-brand-darkblue mb-2">Urgent Fee Intervention</h3>
+                    <p class="text-sm text-slate-600 mb-4 leading-relaxed">Ensure structural stability and examination security for underfunded secondary schools in suburban communities.</p>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex justify-between text-xs font-semibold text-slate-500">
+                            <span>Exam Funding Target</span>
+                            <span class="text-brand-blue">78% Reached</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-brand-blue h-full w-[78%] rounded-full"></div>
+                        </div>
+                    </div>
+                    <a href="#donations" class="block w-full text-center bg-brand-darkblue text-white text-sm py-3 rounded-xl font-semibold hover:bg-brand-blue transition-colors shadow-md">Contribute To Project</a>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <form id="reg-form" class="space-y-5">
+    <!-- ==================== STATS BANNER ==================== -->
+    <section class="bg-gradient-to-r from-brand-blue to-brand-darkblue py-10 text-white shadow-xl relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="space-y-1">
+                <h2 class="text-2xl md:text-5xl font-extrabold text-brand-gold tracking-tight" data-counter="4500">4,500+</h2>
+                <p class="text-xs md:text-sm font-medium text-slate-200 uppercase tracking-wide">Students Supported</p>
+            </div>
+            <div class="space-y-1">
+                <h2 class="text-2xl md:text-5xl font-extrabold text-brand-gold tracking-tight" data-counter="120">120+</h2>
+                <p class="text-xs md:text-sm font-medium text-slate-200 uppercase tracking-wide">Schools Assisted</p>
+            </div>
+            <div class="space-y-1">
+                <h2 class="text-2xl md:text-5xl font-extrabold text-brand-gold tracking-tight" data-counter="85">85+</h2>
+                <p class="text-xs md:text-sm font-medium text-slate-200 uppercase tracking-wide">Projects Executed</p>
+            </div>
+            <div class="space-y-1">
+                <h2 class="text-2xl md:text-5xl font-extrabold text-brand-gold tracking-tight" data-counter="3200">3,200+</h2>
+                <p class="text-xs md:text-sm font-medium text-slate-200 uppercase tracking-wide">Exam Fees Sponsored</p>
+            </div>
+        </div>
+    </section>
 
-            <!-- SECTION A: School Info -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
-                    <h2 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-school mr-2 text-brand-blue"></i>Section A — School Information</h2>
+    <!-- ==================== ABOUT ==================== -->
+    <section id="about" class="py-14 md:py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+            <div class="lg:col-span-5 grid grid-cols-2 gap-4 relative reveal-left">
+                <div class="absolute -inset-4 bg-blue-100 rounded-3xl transform -rotate-2 -z-10 opacity-60"></div>
+                <img class="rounded-2xl shadow-md w-full object-cover h-64 mt-8" src="https://images.unsplash.com/photo-1542810634-71277d95dcbb?auto=format&fit=crop&q=80&w=600" alt="Students studying">
+                <img class="rounded-2xl shadow-xl w-full object-cover h-72" src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80&w=600" alt="School infrastructure">
+            </div>
+            <div class="lg:col-span-7 space-y-8 reveal-right">
+                <div class="space-y-3">
+                    <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">Who We Are</span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-darkblue tracking-tight">Dedicated to Transforming the Educational Ecosystem</h2>
+                    <div class="w-16 h-1 bg-brand-gold rounded"></div>
                 </div>
-                <div class="p-5 space-y-4">
-                    <div>
-                        <label class="text-xs font-bold text-slate-600 block mb-1">School Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="school_name" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="text-xs font-bold text-slate-600 block mb-1">School Address <span class="text-red-500">*</span></label>
-                        <textarea name="school_address" required rows="2" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none"></textarea>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
+                <p class="text-slate-600 leading-relaxed font-light text-base">
+                    <strong>Efewo Education Support Project (EESP)</strong> is a formal registered non-governmental educational support initiative designed to systematically assist students, schools, families, and communities. We specialize in localized strategic school development planning, external examination logistics, financial assistance deployment, and institutional standard compliance management within Nigeria.
+                </p>
+                <div class="grid sm:grid-cols-2 gap-6">
+                    <div class="flex gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue shrink-0"><i class="fa-solid fa-bullseye text-xl"></i></div>
                         <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">Year Established <span class="text-red-500">*</span></label>
-                            <input type="number" name="year_established" required placeholder="e.g. 2005" min="1900" max="2026" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">Nature of School <span class="text-red-500">*</span></label>
-                            <select name="nature_of_school" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                                <option value="">Select type</option>
-                                <option>Nursery Only</option>
-                                <option>Primary Only</option>
-                                <option>Nursery & Primary</option>
-                                <option>Secondary Only</option>
-                                <option>Nursery, Primary & Secondary</option>
-                                <option>Technical/Vocational</option>
-                            </select>
+                            <h4 class="font-bold text-slate-800 mb-1">Our Mission</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">To structuralize systemic educational aids, eliminating fee bottlenecks and executing functional physical transformations in community academic infrastructures.</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="flex gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors">
+                        <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-brand-gold shrink-0"><i class="fa-solid fa-eye text-xl"></i></div>
                         <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">Local Government Area <span class="text-red-500">*</span></label>
-                            <input type="text" name="lga" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">State <span class="text-red-500">*</span></label>
-                            <input type="text" name="state" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            <h4 class="font-bold text-slate-800 mb-1">Our Vision</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">A Nigeria where no capable student is barred from national standardized examinations and every local school functions safely with appropriate physical tools.</p>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">Email <span class="text-red-500">*</span></label>
-                            <input type="email" name="email" required id="form-email" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">WhatsApp <span class="text-red-500">*</span></label>
-                            <input type="tel" name="whatsapp" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                        </div>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60 flex flex-wrap gap-3 items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2">Core Values:</span>
+                    <span class="bg-white border text-slate-700 font-semibold px-3 py-1 rounded-full text-xs shadow-sm">Radical Transparency</span>
+                    <span class="bg-white border text-slate-700 font-semibold px-3 py-1 rounded-full text-xs shadow-sm">Academic Integrity</span>
+                    <span class="bg-white border text-slate-700 font-semibold px-3 py-1 rounded-full text-xs shadow-sm">Community Co-funding</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== OUR AIM ==================== -->
+    <section id="aim" class="py-14 md:py-24 bg-slate-50 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3 reveal-up">
+                <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">Systemic Goals</span>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-darkblue tracking-tight">Our Core Purpose & Strategic Directives</h2>
+                <p class="text-slate-600 font-light text-sm sm:text-base">The singular aim of EESP is to resolve financial and structural backlogs for institutions struggling with execution capabilities.</p>
+            </div>
+            <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                <div class="lg:col-span-7 grid sm:grid-cols-2 gap-6 reveal-left">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3 hover:shadow-md transition-shadow">
+                        <div class="text-brand-blue text-2xl"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">Educational Empowerment</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Providing deep tuition, grants, and specialized study provisions to families experiencing immediate economic hardship.</p>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">Proprietor's Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="proprietor_name" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-bold text-slate-600 block mb-1">Proprietor's Phone <span class="text-red-500">*</span></label>
-                            <input type="tel" name="proprietor_phone" required class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3 hover:shadow-md transition-shadow">
+                        <div class="text-emerald-500 text-2xl"><i class="fa-solid fa-award"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">Student Academic Success</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Coaching support tracking systems designed to safeguard continuous, high-bracket metrics across external evaluations.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3 hover:shadow-md transition-shadow">
+                        <div class="text-brand-gold text-2xl"><i class="fa-solid fa-school"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">School Growth Support</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Rehabilitating structural gaps, laboratories, library systems, and structural security perimeters via physical material investments.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3 hover:shadow-md transition-shadow">
+                        <div class="text-indigo-500 text-2xl"><i class="fa-solid fa-users"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">Community Development</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Localizing educational masterplanning, enabling local community boards to coordinate project priorities directly with inspectors.</p>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 reveal-right relative">
+                    <div class="bg-brand-darkblue rounded-3xl p-8 text-white space-y-6 relative overflow-hidden shadow-2xl">
+                        <div class="absolute -bottom-10 -right-10 text-white/5 text-[12rem] pointer-events-none"><i class="fa-solid fa-shield"></i></div>
+                        <h4 class="text-xl font-bold text-brand-gold"><i class="fa-solid fa-chess-knight mr-2"></i> Strategic Long-Term Focus</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed font-light">We go beyond short-term handouts. EESP insists on the execution of standard 5-year systemic development roadmaps before deploying matching capital funds to primary or secondary partner institutions.</p>
+                        <div class="pt-2 border-t border-white/10 space-y-3 text-xs text-slate-200">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-brand-accent"></i> Standard Assessment Metric Verification</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-brand-accent"></i> Counterpart Accountability Funding Track</div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- SECTION B: Enrollment -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
-                    <h2 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-users mr-2 text-brand-blue"></i>Section B — Student Enrollment (M = Male, F = Female)</h2>
+    <!-- ==================== PROGRAMS ==================== -->
+    <section id="programs" class="py-14 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3 reveal-up">
+                <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">What We Do</span>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-darkblue tracking-tight">Comprehensive Services & Interventions</h2>
+                <p class="text-slate-600 font-light text-sm sm:text-base">Targeted administrative and infrastructural operations optimized to support standard Nigerian institution paradigms.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 reveal-up">
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-receipt text-xl"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">School Fee Support</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Direct complete or partial intervention releases targeting high-risk indigent student accounts before administrative exclusion windows close.</p>
+                    </div>
+                    <a href="#contact" class="inline-flex items-center gap-2 text-xs font-bold text-brand-blue mt-6">Learn More <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
                 </div>
-                <div class="p-5 space-y-5">
-
-                    <!-- Nursery -->
-                    <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Nursery</h3>
-                        <div class="overflow-x-auto">
-                            <table class="border-collapse text-[11px] w-full">
-                                <thead>
-                                    <tr class="bg-blue-50">
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">KG1/ECCD</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">KG2/ECCD</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Nursery 1</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Nursery 2</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Nursery 3</th>
-                                    </tr>
-                                    <tr class="bg-slate-50">
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="kg1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="kg1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="kg2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="kg2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="n1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="n1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="n2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="n2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="n3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="n3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-hand-holding-dollar text-xl"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">Educational Grants</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Non-repayable direct cash allocations to support instructional materials, transport stipends, and specialized uniforms.</p>
                     </div>
-
-                    <!-- Primary -->
-                    <div>
-                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Primary</h3>
-                        <div class="overflow-x-auto">
-                            <table class="border-collapse text-[11px] w-full">
-                                <thead>
-                                    <tr class="bg-blue-50">
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 1</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 2</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 3</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 4</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 5</th>
-                                        <th class="border border-slate-300 px-2 py-2 text-slate-600 font-bold" colspan="2">Primary 6</th>
-                                    </tr>
-                                    <tr class="bg-slate-50">
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p4_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p4_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p5_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p5_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p6_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        <td class="border border-slate-300 p-1"><input type="number" name="p6_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <a href="#contact" class="inline-flex items-center gap-2 text-xs font-bold text-brand-blue mt-6">Learn More <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-user-graduate text-xl"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">Student Sponsorship</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Continuous academic financing options connecting private or institutional donors with matched high-potential students.</p>
                     </div>
+                    <a href="#contact" class="inline-flex items-center gap-2 text-xs font-bold text-brand-blue mt-6">Learn More <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-file-invoice text-xl"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">External Exam Fee Support</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Co-funding logistics processing for final year terminal secondary tracking configurations including SSCE, NECO, and NABTEB.</p>
+                    </div>
+                    <a href="#exams" class="inline-flex items-center gap-2 text-xs font-bold text-brand-blue mt-6">Learn More <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-compass-drafting text-xl"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">School Strategic Planning</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Consultancy framework generation providing multi-year performance modeling benchmarks and growth planning blueprints.</p>
+                    </div>
+                    <a href="#execution" class="inline-flex items-center gap-2 text-xs font-bold text-brand-blue mt-6">Learn More <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors"><i class="fa-solid fa-magnifying-glass-chart text-xl"></i></div>
+                        <h3 class="font-bold text-slate-800 text-lg">Educational Assessments</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">Comprehensive tracking evaluations utilizing authorized metrics criteria books to isolate institutional efficiency gaps.</p>
+                    </div>
+                    <a href="#execution" class="inline-flex items-center gap-2 text-xs font-bold text-brand-blue mt-6">Learn More <i class="fa-solid fa-arrow-right text-[10px]"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <!-- Secondary -->
-                    <div class="grid sm:grid-cols-2 gap-4">
-                        <div>
-                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Junior Secondary School</h3>
-                            <div class="overflow-x-auto">
-                                <table class="border-collapse text-[11px]">
-                                    <thead>
-                                        <tr class="bg-blue-50">
-                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">JSS 1</th>
-                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">JSS 2</th>
-                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">JSS 3</th>
-                                        </tr>
-                                        <tr class="bg-slate-50">
-                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="jss1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="jss1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="jss2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="jss2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="jss3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="jss3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+    <!-- ==================== SCHOOL EXECUTION ==================== -->
+    <section id="execution" class="py-14 md:py-24 bg-slate-950 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(15,82,186,0.15),transparent_50%)]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+                <div class="lg:col-span-7 space-y-6 reveal-left">
+                    <span class="text-sm font-extrabold text-brand-accent uppercase tracking-widest block">Infrastructural Partnership</span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">School Project Execution Matrix</h2>
+                    <p class="text-slate-400 font-light text-sm sm:text-base leading-relaxed">To qualify for matching development funds, laboratories deployment, or major physical site modifications, partner institutions must declare structural intent via our structured accountability tracking metrics framework.</p>
+                    <div class="space-y-4 bg-slate-900/60 p-6 rounded-2xl border border-white/10">
+                        <h4 class="text-brand-gold font-bold text-sm uppercase tracking-wider mb-2"><i class="fa-solid fa-clipboard-list mr-2"></i> Mandatory Qualification Protocols</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div class="p-3 bg-slate-950/80 rounded-xl border border-white/5 flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center font-bold text-[10px] shrink-0">1</span>
+                                <p class="text-slate-300">Purchase Official Membership Application Form — <strong class="text-white">₦5,000</strong></p>
+                            </div>
+                            <div class="p-3 bg-slate-950/80 rounded-xl border border-white/5 flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center font-bold text-[10px] shrink-0">2</span>
+                                <p class="text-slate-300">Remit Yearly Institutional Membership Dues — <strong class="text-white">₦10,000</strong></p>
+                            </div>
+                            <div class="p-3 bg-slate-950/80 rounded-xl border border-white/5 flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center font-bold text-[10px] shrink-0">3</span>
+                                <p class="text-slate-300">Deploy EESP Standard Performance Assessment Book for Nigerian Schools</p>
+                            </div>
+                            <div class="p-3 bg-slate-950/80 rounded-xl border border-white/5 flex items-start gap-3">
+                                <span class="w-6 h-6 rounded-full bg-brand-blue flex items-center justify-center font-bold text-[10px] shrink-0">4</span>
+                                <p class="text-slate-300">File Certified <strong class="text-white">5-Year Strategic Institutional Development Blueprint</strong></p>
                             </div>
                         </div>
-                        <div>
-                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Senior Secondary School</h3>
-                            <div class="overflow-x-auto">
-                                <table class="border-collapse text-[11px]">
-                                    <thead>
-                                        <tr class="bg-blue-50">
-                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">SS 1</th>
-                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">SS 2</th>
-                                            <th class="border border-slate-300 px-3 py-2 text-slate-600 font-bold" colspan="2">SS 3</th>
-                                        </tr>
-                                        <tr class="bg-slate-50">
-                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                            <th class="border border-slate-300 px-2 py-1 text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-slate-500">F</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="ss1_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="ss1_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="ss2_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="ss2_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="ss3_m" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                            <td class="border border-slate-300 p-1"><input type="number" name="ss3_f" min="0" value="0" class="border-0 focus:outline-none bg-transparent"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="mt-2 p-3 bg-brand-gold/10 border border-brand-gold/20 rounded-xl flex items-center gap-3">
+                            <div class="text-brand-gold text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <p class="text-xs text-brand-softgold font-medium">Critical Factor: School must provide a minimum 60% counterpart asset funding contribution toward direct project execution.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
+                        <a href="#contact" class="bg-brand-blue text-white text-xs font-bold px-6 py-3.5 rounded-xl shadow-md hover:bg-brand-darkblue transition-all">Apply For Project Support</a>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 reveal-right">
+                    <div class="bg-slate-900 rounded-3xl p-6 border border-white/10 space-y-4">
+                        <div class="relative rounded-2xl overflow-hidden h-48 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=600');">
+                            <span class="absolute top-3 left-3 bg-emerald-500 text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded">Success Story</span>
+                        </div>
+                        <h4 class="font-bold text-base text-slate-200">Karshi Community Secondary School Block</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">Complete structural roof repair and optimization tracking checklist executed via 60% community commitment matching support structures.</p>
+                        <div class="space-y-2 pt-2 border-t border-white/5">
+                            <div class="flex justify-between text-[11px] text-slate-500 font-medium">
+                                <span>Timeline Milestones Met</span>
+                                <span class="text-brand-accent">100% Finalized</span>
+                            </div>
+                            <div class="w-full bg-slate-950 h-1.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-full"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- SECTION C: Professional Registration -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="bg-slate-50 border-b border-slate-200 px-5 py-3">
-                    <h2 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-certificate mr-2 text-brand-blue"></i>Section C — Professional Registration</h2>
+    <!-- ==================== EXAM SUPPORT ==================== -->
+    <section id="exams" class="py-14 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
+                <div class="lg:col-span-5 reveal-left space-y-6">
+                    <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200/80 shadow-inner grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-center space-y-1">
+                            <span class="block text-2xl font-black text-brand-darkblue">SSCE</span>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">WAEC Framework</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-center space-y-1">
+                            <span class="block text-2xl font-black text-brand-darkblue">NECO</span>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">National Track</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-center space-y-1">
+                            <span class="block text-2xl font-black text-brand-darkblue">NABTEB</span>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Technical Track</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-center space-y-1 border-blue-200">
+                            <span class="block text-2xl font-black text-brand-blue"><i class="fa-solid fa-circle-check"></i></span>
+                            <span class="block text-[10px] font-bold text-brand-blue uppercase tracking-widest">Approved Centers</span>
+                        </div>
+                    </div>
+                    <div class="bg-brand-softgold/30 border border-brand-gold/20 p-5 rounded-2xl">
+                        <h4 class="font-bold text-brand-darkblue text-sm mb-1"><i class="fa-solid fa-sack-dollar mr-2"></i> Micro-Contribution Setup</h4>
+                        <p class="text-xs text-slate-700 leading-relaxed font-light">Beneficiaries commit micro-deposits of as low as 10% monthly for at least one year, while EESP covers upfront balance components directly to the certified examination council accounts.</p>
+                    </div>
                 </div>
-                <div class="p-5">
-                    <p class="text-xs text-slate-500 mb-3">Tick all that apply to your school</p>
+                <div class="lg:col-span-7 reveal-right space-y-6">
+                    <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">Examination Security Log</span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-darkblue tracking-tight">External Examination Fee Support Infrastructure</h2>
+                    <p class="text-slate-600 font-light text-sm sm:text-base leading-relaxed">Prevent sudden secondary school terminal drop-outs. We maintain strict ledger matching balances to verify student center clearances and prevent administrative disqualification due to sudden fee volatility.</p>
+                    <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                        <div class="flex items-start gap-3">
+                            <div class="text-emerald-500 mt-1"><i class="fa-solid fa-circle-check"></i></div>
+                            <p class="text-xs text-slate-600"><strong class="text-slate-800 block">Monthly Balance Ledger Alerts</strong> Automated dashboard configurations helping parents track matching targets step-by-step.</p>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="text-emerald-500 mt-1"><i class="fa-solid fa-circle-check"></i></div>
+                            <p class="text-xs text-slate-600"><strong class="text-slate-800 block">Preparation Asset Distribution</strong> Grants covering official question archives and physical model calculator kits.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 pt-4">
+                        <a href="#contact" class="bg-brand-darkblue text-white text-xs font-bold px-6 py-3.5 rounded-xl hover:bg-brand-blue shadow transition-all">Register For Exam Support</a>
+                        <a href="#donations" class="bg-brand-gold text-brand-darkblue text-xs font-bold px-6 py-3.5 rounded-xl hover:bg-opacity-90 shadow transition-all">Sponsor a Student</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MEMBERSHIP SECTION (PAYMENT FLOW) ==================== -->
+    <section id="membership" class="py-14 md:py-24 bg-slate-50 border-y border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+
+            <!-- Left: Info -->
+            <div class="lg:col-span-5 space-y-6 reveal-left">
+                <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">Join The Grid</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-darkblue tracking-tight">Become a Validated EESP Partner Member</h2>
+                <p class="text-slate-600 font-light text-xs sm:text-sm leading-relaxed">
+                    Membership provides immediate structural clearance access to grants pipelines, school execution development pools, and regional structural voting panels.
+                </p>
+
+                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3 text-xs">
+                    <div class="flex justify-between items-center pb-2.5 border-b border-slate-100">
+                        <div>
+                            <span class="font-semibold text-slate-700 block">Membership Application Form</span>
+                            <span class="text-slate-400">One-time purchase to access & submit the form</span>
+                        </div>
+                        <span class="font-extrabold text-slate-800 text-base">₦5,000</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-1">
+                        <div>
+                            <span class="font-semibold text-slate-700 block">Yearly Membership Dues</span>
+                            <span class="text-slate-400">Annual renewal for active members</span>
+                        </div>
+                        <span class="font-extrabold text-slate-800 text-base">₦10,000</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Guaranteed Framework Benefits</h4>
+                    <ul class="space-y-2 text-xs text-slate-600 font-light">
+                        <li><i class="fa-solid fa-arrow-right text-brand-blue mr-2 text-[10px]"></i> Standard structural priority access allocations</li>
+                        <li><i class="fa-solid fa-arrow-right text-brand-blue mr-2 text-[10px]"></i> Dedicated professional development resource packages</li>
+                        <li><i class="fa-solid fa-arrow-right text-brand-blue mr-2 text-[10px]"></i> Authorized community networking platform directories</li>
+                    </ul>
+                </div>
+
+                <!-- Yearly Dues Card -->
+                <div class="bg-brand-darkblue text-white p-5 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-sm"><i class="fa-solid fa-rotate mr-2 text-brand-gold"></i> Already a Member?</h4>
+                    <p class="text-xs text-slate-300 font-light">Pay your yearly membership dues to keep your account active and maintain access to all EESP programs.</p>
+                    <div class="space-y-2">
+                        <input type="email" x-model="duesEmail" placeholder="Your registered email" class="w-full px-3 py-2.5 rounded-xl text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-brand-gold">
+                        <button @click="payDues()" :disabled="duesLoading" class="w-full bg-brand-gold text-brand-darkblue text-xs font-extrabold py-3 rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-spinner animate-spin" x-show="duesLoading"></i>
+                            <span x-text="duesLoading ? 'Initializing...' : 'Pay ₦10,000 Yearly Dues'"></span>
+                        </button>
+                    </div>
+                    <p class="text-[10px] text-slate-400 text-center" x-show="duesError" x-text="duesError"></p>
+                </div>
+            </div>
+
+            <!-- Right: Payment → Form Flow -->
+            <div class="lg:col-span-7 reveal-right">
+
+                <!-- STEP INDICATOR -->
+                <div class="flex items-center gap-0 mb-8">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                             :class="memberStep === 1 ? 'step-active' : memberStep > 1 ? 'step-done' : 'step-inactive'">
+                            <i x-show="memberStep > 1" class="fa-solid fa-check text-[10px]"></i>
+                            <span x-show="memberStep <= 1">1</span>
+                        </div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600 hidden sm:block">Pay for Form</span>
+                    </div>
+                    <div class="flex-1 h-0.5 mx-3" :class="memberStep > 1 ? 'bg-emerald-400' : 'bg-slate-200'"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                             :class="memberStep === 2 ? 'step-active' : memberStep > 2 ? 'step-done' : 'step-inactive'">
+                            <i x-show="memberStep > 2" class="fa-solid fa-check text-[10px]"></i>
+                            <span x-show="memberStep <= 2">2</span>
+                        </div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600 hidden sm:block">Fill Form</span>
+                    </div>
+                    <div class="flex-1 h-0.5 mx-3" :class="memberStep > 2 ? 'bg-emerald-400' : 'bg-slate-200'"></div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
+                             :class="memberStep === 3 ? 'step-done' : 'step-inactive'">
+                            <i x-show="memberStep === 3" class="fa-solid fa-check text-[10px]"></i>
+                            <span x-show="memberStep !== 3">3</span>
+                        </div>
+                        <span class="text-[10px] sm:text-xs font-semibold text-slate-600 hidden sm:block">Done</span>
+                    </div>
+                </div>
+
+                <!-- STEP 1: Pay ₦5,000 -->
+                <div x-show="memberStep === 1" class="bg-white p-5 md:p-8 rounded-3xl shadow-xl border border-slate-200/60 space-y-5">
+                    <div>
+                        <h3 class="text-xl font-bold text-brand-darkblue mb-1"><i class="fa-solid fa-id-card-clip mr-2 text-brand-gold"></i> Get Your Membership Form</h3>
+                        <p class="text-xs text-slate-500">Pay a one-time fee of ₦5,000 to unlock and submit your membership application form.</p>
+                    </div>
+
+                    <div class="bg-brand-softgold/40 border border-brand-gold/30 rounded-2xl p-4 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-brand-gold/20 rounded-xl flex items-center justify-center text-brand-gold text-xl shrink-0"><i class="fa-solid fa-file-invoice"></i></div>
+                        <div>
+                            <span class="block font-bold text-brand-darkblue text-sm">EESP Membership Application Form</span>
+                            <span class="text-xs text-slate-600">One-time purchase · Instant access · Submit online</span>
+                        </div>
+                        <span class="ml-auto font-extrabold text-brand-darkblue text-xl shrink-0">₦5,000</span>
+                    </div>
+
                     <div class="space-y-3">
-                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
-                            <input type="checkbox" name="reg_cac" class="w-5 h-5 rounded accent-blue-600">
-                            <div>
-                                <span class="text-sm font-semibold text-slate-700 block">CAC</span>
-                                <span class="text-xs text-slate-400">Corporate Affairs Commission</span>
+                        <label class="text-xs font-bold text-slate-600 block">Your Email Address <span class="text-red-500">*</span></label>
+                        <input type="email" x-model="formEmail" placeholder="Enter your email to receive confirmation" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        <p class="text-[10px] text-slate-400"><i class="fa-solid fa-info-circle mr-1"></i> Your email is used to identify your payment and link it to your form submission.</p>
+                    </div>
+
+                    <button @click="payForForm()" :disabled="payLoading || !formEmail"
+                        class="w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-spinner animate-spin" x-show="payLoading"></i>
+                        <i class="fa-solid fa-lock" x-show="!payLoading"></i>
+                        <span x-text="payLoading ? 'Connecting to Paystack...' : 'Pay ₦5,000 & Unlock Form'"></span>
+                    </button>
+                    <p class="text-[10px] text-center text-slate-400"><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Secured by Paystack · PCI-DSS Compliant</p>
+                    <p class="text-[10px] text-center text-red-500 font-medium" x-show="payError" x-text="payError"></p>
+
+                    <!-- Already paid? -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <p class="text-xs text-slate-500 text-center">Already paid? <a href="form.html" class="text-brand-blue font-bold hover:underline">Click here to fill your form</a></p>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Membership Form -->
+                <div x-show="memberStep === 2" class="bg-white rounded-3xl shadow-xl border border-slate-200/60 overflow-hidden">
+                    <div class="bg-gradient-to-r from-brand-blue to-brand-darkblue p-5 text-white">
+                        <h3 class="font-bold text-lg"><i class="fa-solid fa-school mr-2 text-brand-gold"></i> EESP School Registration Form</h3>
+                        <p class="text-xs text-blue-200 mt-1">Payment verified ✓ — Complete all fields and submit</p>
+                    </div>
+
+                    <form @submit.prevent="submitMembershipForm()" class="p-4 md:p-8 space-y-4 form-scroll" enctype="multipart/form-data">
+
+                        <!-- Payment Reference -->
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                            <span class="text-emerald-800 font-medium">Payment Reference: <strong x-text="paymentRef || 'Enter below'"></strong></span>
+                        </div>
+                        <div x-show="!paymentRef" class="space-y-1">
+                            <label class="text-xs font-bold text-slate-600 block">Payment Reference <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="manualRef" placeholder="e.g. T123456789" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            <p class="text-[10px] text-slate-400">Check your email for the Paystack payment reference</p>
+                        </div>
+
+                        <!-- SECTION A: School Information -->
+                        <div class="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-3">
+                            <h4 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-school mr-2"></i>Section A — School Information</h4>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-600 block">School Name <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="mForm.school_name" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-600 block">School Address <span class="text-red-500">*</span></label>
+                            <textarea x-model="mForm.school_address" required rows="2" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none"></textarea>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">Year Established <span class="text-red-500">*</span></label>
+                                <input type="number" x-model="mForm.year_established" required placeholder="e.g. 2005" min="1900" max="2026" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
                             </div>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
-                            <input type="checkbox" name="reg_state" class="w-5 h-5 rounded accent-blue-600">
-                            <div>
-                                <span class="text-sm font-semibold text-slate-700 block">State Mode Registration</span>
-                                <span class="text-xs text-slate-400">State Ministry of Education</span>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">Nature of School <span class="text-red-500">*</span></label>
+                                <select x-model="mForm.nature_of_school" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                                    <option value="">Select Type</option>
+                                    <option>Nursery Only</option>
+                                    <option>Primary Only</option>
+                                    <option>Nursery & Primary</option>
+                                    <option>Secondary Only</option>
+                                    <option>Nursery, Primary & Secondary</option>
+                                    <option>Technical/Vocational</option>
+                                </select>
                             </div>
-                        </label>
-                        <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
-                            <input type="checkbox" name="reg_napps" class="w-5 h-5 rounded accent-blue-600">
-                            <div>
-                                <span class="text-sm font-semibold text-slate-700 block">NAPPS</span>
-                                <span class="text-xs text-slate-400">National Association of Proprietors of Private Schools</span>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">Local Government Area <span class="text-red-500">*</span></label>
+                                <input type="text" x-model="mForm.lga" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
                             </div>
-                        </label>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">State <span class="text-red-500">*</span></label>
+                                <input type="text" x-model="mForm.state" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">Email Address <span class="text-red-500">*</span></label>
+                                <input type="email" x-model="mForm.email" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">WhatsApp Number <span class="text-red-500">*</span></label>
+                                <input type="tel" x-model="mForm.whatsapp" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">Proprietor's Name <span class="text-red-500">*</span></label>
+                                <input type="text" x-model="mForm.proprietor_name" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-600 block">Proprietor's Phone Number <span class="text-red-500">*</span></label>
+                                <input type="tel" x-model="mForm.proprietor_phone" required class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- SECTION B: Student Enrollment -->
+                        <div class="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-3 mt-2">
+                            <h4 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-users mr-2"></i>Section B — Pupil/Student Enrollment</h4>
+                            <p class="text-[10px] text-slate-500 mt-1">Enter number of Male (M) and Female (F) students per class. <span class="text-brand-blue font-semibold">Scroll right to see all columns.</span></p>
+                        </div>
+
+                        <!-- Nursery -->
+                        <div class="space-y-2">
+                            <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wide">Nursery</h5>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-[11px] border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 px-2 py-1.5 text-left font-bold text-slate-600" colspan="2">KG1/ECCD</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 text-left font-bold text-slate-600" colspan="2">KG2/ECCD</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 text-left font-bold text-slate-600" colspan="2">Nursery 1</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 text-left font-bold text-slate-600" colspan="2">Nursery 2</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 text-left font-bold text-slate-600" colspan="2">Nursery 3</th>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.kg1_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.kg1_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.kg2_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.kg2_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.n1_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.n1_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.n2_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.n2_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.n3_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.n3_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Primary -->
+                        <div class="space-y-2">
+                            <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wide">Primary</h5>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-[11px] border-collapse">
+                                    <thead>
+                                        <tr class="bg-slate-100">
+                                            <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">Primary 1</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">Primary 2</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">Primary 3</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">Primary 4</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">Primary 5</th>
+                                            <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">Primary 6</th>
+                                        </tr>
+                                        <tr class="bg-slate-50">
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p1_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p1_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p2_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p2_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p3_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p3_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p4_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p4_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p5_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p5_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p6_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.p6_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Secondary -->
+                        <div class="space-y-2">
+                            <div class="grid sm:grid-cols-2 gap-4">
+                                <!-- JSS -->
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Junior Secondary School</h5>
+                                    <table class="w-full text-[11px] border-collapse">
+                                        <thead>
+                                            <tr class="bg-slate-100">
+                                                <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">JSS 1</th>
+                                                <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">JSS 2</th>
+                                                <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">JSS 3</th>
+                                            </tr>
+                                            <tr class="bg-slate-50">
+                                                <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                                <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                                <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.jss1_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.jss1_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.jss2_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.jss2_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.jss3_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.jss3_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- SSS -->
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Senior Secondary School</h5>
+                                    <table class="w-full text-[11px] border-collapse">
+                                        <thead>
+                                            <tr class="bg-slate-100">
+                                                <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">SS 1</th>
+                                                <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">SS 2</th>
+                                                <th class="border border-slate-300 px-2 py-1.5 font-bold text-slate-600" colspan="2">SS 3</th>
+                                            </tr>
+                                            <tr class="bg-slate-50">
+                                                <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                                <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                                <th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">M</th><th class="border border-slate-300 px-2 py-1 text-center font-semibold text-slate-500">F</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.ss1_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.ss1_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.ss2_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.ss2_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.ss3_m" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                                <td class="border border-slate-300 p-1"><input type="number" x-model="mForm.ss3_f" min="0" class="w-10 text-center text-xs border-0 focus:outline-none"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION C: Professional Registration -->
+                        <div class="bg-brand-blue/5 border border-brand-blue/20 rounded-xl p-3 mt-2">
+                            <h4 class="text-xs font-extrabold text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-certificate mr-2"></i>Section C — Professional Registration</h4>
+                            <p class="text-[10px] text-slate-500 mt-1">Tick all that apply to your school</p>
+                        </div>
+                        <div class="flex flex-wrap gap-4 text-sm">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" x-model="mForm.reg_cac" class="w-4 h-4 rounded accent-blue-600">
+                                <span class="text-xs font-medium text-slate-700">CAC (Corporate Affairs Commission)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" x-model="mForm.reg_state" class="w-4 h-4 rounded accent-blue-600">
+                                <span class="text-xs font-medium text-slate-700">State Mode Registration</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" x-model="mForm.reg_napps" class="w-4 h-4 rounded accent-blue-600">
+                                <span class="text-xs font-medium text-slate-700">NAPPS (National Association of Proprietors of Private Schools)</span>
+                            </label>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="pt-2">
+                            <button type="submit" :disabled="formLoading"
+                                class="w-full bg-brand-blue text-white text-sm font-bold py-4 rounded-xl hover:bg-brand-darkblue shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-spinner animate-spin" x-show="formLoading"></i>
+                                <i class="fa-solid fa-paper-plane" x-show="!formLoading"></i>
+                                <span x-text="formLoading ? 'Submitting...' : 'Submit Registration Form'"></span>
+                            </button>
+                        </div>
+
+                        <p class="text-xs text-red-500 text-center font-medium" x-show="formError" x-text="formError"></p>
+                    </form>
+                </div>
+
+                <!-- STEP 3: Success -->
+                <div x-show="memberStep === 3" class="bg-white p-10 rounded-3xl shadow-xl border border-slate-200/60 text-center space-y-5">
+                    <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-4xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-brand-darkblue">Application Received!</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">Your membership form has been submitted successfully. The EESP admin team will review and update your status shortly.</p>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left space-y-2 text-xs">
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Form ID</span>
+                            <span class="font-bold text-slate-800" x-text="'#' + (submittedFormId || '---')"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Submitted Email</span>
+                            <span class="font-bold text-slate-800" x-text="mForm.email || formEmail"></span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-500">Status</span>
+                            <span class="bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">Pending Review</span>
+                        </div>
+                    </div>
+                    <a href="#contact" class="inline-block bg-brand-blue text-white text-sm font-bold px-8 py-3 rounded-xl hover:bg-brand-darkblue transition-all">Contact EESP Office</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== DONATION SECTION ==================== -->
+    <section id="donations" class="py-14 md:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-br from-brand-darkblue to-slate-950 rounded-2xl md:rounded-[2.5rem] text-white p-6 md:p-16 grid lg:grid-cols-12 gap-8 lg:gap-12 relative overflow-hidden shadow-2xl reveal-up">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(56,189,248,0.1),transparent_40%)] pointer-events-none"></div>
+
+                <div class="lg:col-span-6 space-y-6">
+                    <span class="text-sm font-extrabold text-brand-accent uppercase tracking-widest block">Direct Impact Capital</span>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">Your Donations Shift Generation Lifelines</h2>
+                    <p class="text-slate-400 font-light text-sm leading-relaxed">Every single transaction directly targets specified physical material procurement. We enforce audited reporting standards for every naira.</p>
+                    <div class="border-l-4 border-brand-gold pl-4 text-xs italic text-slate-300">"Your support changes lives through education."</div>
+                    <div class="bg-white/5 border border-white/10 p-4 rounded-2xl flex gap-3 items-center">
+                        <div class="w-10 h-10 rounded-full gold-gradient shrink-0 flex items-center justify-center font-bold text-brand-darkblue text-xs">MA</div>
+                        <p class="text-[11px] text-slate-300 font-light leading-relaxed">"EESP handled our entire center registration when things became difficult. My daughter cleared her complete WAEC metrics effortlessly." — <strong>Mrs. M. Ahmed, Parent</strong></p>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 bg-white rounded-3xl p-6 md:p-8 text-slate-800 shadow-xl border border-white/10">
+                    <!-- Plan Toggle -->
+                    <div class="flex gap-2 p-1 bg-slate-100 rounded-xl mb-6 text-xs font-bold" id="don-plan-wrap">
+                        <button onclick="donSelectPlan('once')" id="don-plan-once" class="flex-1 py-2 rounded-lg text-center transition-colors bg-brand-blue text-white">Single Donation</button>
+                        <button onclick="donSelectPlan('monthly')" id="don-plan-monthly" class="flex-1 py-2 rounded-lg text-center transition-colors text-slate-600">Monthly Sustainer</button>
+                    </div>
+                    <!-- Amount Presets -->
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <button onclick="donSelectAmount('5000')" id="don-amt-5000" class="border border-slate-200 py-3 rounded-xl text-xs text-center transition-all hover:border-blue-400">&#8358;5,000</button>
+                        <button onclick="donSelectAmount('10000')" id="don-amt-10000" class="border border-blue-600 bg-blue-50 text-blue-700 font-bold py-3 rounded-xl text-xs text-center transition-all">&#8358;10,000</button>
+                        <button onclick="donSelectAmount('25000')" id="don-amt-25000" class="border border-slate-200 py-3 rounded-xl text-xs text-center transition-all hover:border-blue-400">&#8358;25,000</button>
+                    </div>
+                    <!-- Custom Amount -->
+                    <div class="space-y-1 mb-4">
+                        <label class="text-xs font-bold text-slate-500 block">Custom Amount (&#8358;)</label>
+                        <input type="number" id="don-custom" placeholder="Enter amount" oninput="donClearPreset()" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <!-- Email -->
+                    <div class="space-y-1 mb-6">
+                        <label class="text-xs font-bold text-slate-500 block">Your Email <span class="text-red-500">*</span></label>
+                        <input type="email" id="don-email" placeholder="you@example.com" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <!-- Donate Button -->
+                    <button onclick="donSubmit()" id="don-btn" class="w-full bg-yellow-500 text-blue-900 font-extrabold text-sm py-4 rounded-xl hover:bg-yellow-400 shadow-lg transition-all text-center">
+                        <i class="fa-solid fa-heart mr-2"></i> Donate Securely via Paystack
+                    </button>
+                    <p id="don-error" class="text-xs text-red-500 text-center mt-2 font-medium hidden"></p>
+                    <span class="block text-[10px] text-center text-slate-400 mt-3 font-medium"><i class="fa-solid fa-shield-halved mr-1 text-emerald-500"></i> PCI-DSS Compliant · End-to-End Encrypted</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== GALLERY ==================== -->
+    <section id="gallery" class="py-14 md:py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-3 reveal-up">
+                <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">Media Assets Log</span>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-brand-darkblue tracking-tight">EESP Operational Field Gallery</h2>
+                <p class="text-slate-600 font-light text-sm sm:text-base">Visual historical ledger documenting active structural assessments and fee deployment across centers.</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 reveal-up">
+                <div class="space-y-4">
+                    <img class="w-full object-cover h-48 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img1.jpeg" alt="Students writing exam">
+                    <img class="w-full object-cover h-64 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img2.jpeg" alt="WAEC anti-malpractice poster">
+                </div>
+                <div class="space-y-4">
+                    <img class="w-full object-cover h-72 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img3.jpeg" alt="Students in examination hall">
+                    <img class="w-full object-cover h-44 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img4.jpeg" alt="Students writing">
+                </div>
+                <div class="space-y-4">
+                    <img class="w-full object-cover h-48 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img5.jpeg" alt="Classroom session">
+                    <img class="w-full object-cover h-64 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img6.jpeg" alt="Supervisor and students">
+                </div>
+                <div class="space-y-4">
+                    <img class="w-full object-cover h-64 rounded-2xl shadow-sm hover:opacity-90 transition-opacity" src="img7.jpeg" alt="Students focused on exam">
+                    <div class="relative bg-brand-darkblue rounded-2xl h-48 flex flex-col justify-center items-center text-center p-4 shadow-md text-white border border-white/5">
+                        <i class="fa-solid fa-circle-play text-3xl text-brand-gold mb-2 animate-pulse"></i>
+                        <span class="text-xs font-bold uppercase tracking-wider block">Video Briefing</span>
+                        <span class="text-[10px] text-slate-400 block mt-1">Operational Overview</span>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Error message -->
-            <div id="form-error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 font-medium hidden">
-                <i class="fa-solid fa-circle-exclamation mr-2"></i>
-                <span id="form-error-text"></span>
+    <!-- ==================== PARTNERS ==================== -->
+    <section class="py-12 bg-white border-t border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <span class="text-[11px] font-extrabold uppercase text-slate-400 tracking-widest block">Endorsed Ecosystem Collaborations</span>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all">
+                <span class="font-black text-slate-700 tracking-tight text-lg"><i class="fa-solid fa-building-ngo mr-1"></i> FCT Education Board Network</span>
+                <span class="font-black text-slate-700 tracking-tight text-lg"><i class="fa-solid fa-school-flag mr-1"></i> NAPPS Nigeria Link</span>
+                <span class="font-black text-slate-700 tracking-tight text-lg"><i class="fa-solid fa-building-columns mr-1"></i> WAEC Logistics Affiliates</span>
             </div>
+        </div>
+    </section>
 
-            <!-- Submit Button -->
-            <button type="submit" id="submit-btn" class="w-full bg-brand-blue text-white text-base font-bold py-4 rounded-2xl hover:bg-brand-darkblue shadow-lg transition-all flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i>
-                Submit Registration Form
-            </button>
-            <p class="text-center text-xs text-slate-400"><i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Your data is securely saved</p>
-
-        </form>
-
-        <!-- Success Screen -->
-        <div id="success-screen" class="hidden text-center py-12 space-y-5">
-            <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-5xl"></i>
-            </div>
-            <h2 class="text-2xl font-extrabold text-brand-darkblue">Registration Submitted!</h2>
-            <p class="text-sm text-slate-600 max-w-sm mx-auto">Your school registration has been received successfully. The EESP team will review and get back to you.</p>
-            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-left space-y-2 text-xs max-w-sm mx-auto">
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Form ID</span>
-                    <span class="font-bold text-slate-800" id="success-form-id"></span>
+    <!-- ==================== CONTACT ==================== -->
+    <section id="contact" class="py-14 md:py-24 bg-slate-50 border-t border-slate-200/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-12 gap-16">
+            <div class="lg:col-span-5 space-y-8 reveal-left">
+                <div class="space-y-3">
+                    <span class="text-sm font-extrabold text-brand-blue uppercase tracking-widest block">Communications Hub</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-brand-darkblue tracking-tight">Connect With EESP Offices</h2>
+                    <div class="w-16 h-1 bg-brand-gold rounded"></div>
                 </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-500">Status</span>
-                    <span class="bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded-full">Pending Review</span>
+                <div class="space-y-6 text-sm">
+                    <div class="flex gap-4 items-start">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-brand-blue shrink-0"><i class="fa-solid fa-building"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Head Office</h4>
+                            <p class="text-slate-600 font-light text-xs leading-relaxed">No. 5, Behind Police Housing Estate, Off Orozo-Karshi Road, Kurudu, FCT, Abuja.</p>
+                            <span class="block text-xs font-semibold text-brand-blue mt-1"><i class="fa-solid fa-phone mr-1"></i> 08036606800</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-start">
+                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-brand-gold shrink-0"><i class="fa-solid fa-map-pin"></i></div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base mb-1">Branch Office</h4>
+                            <p class="text-slate-600 font-light text-xs leading-relaxed">Aomo Plaza, Gurku Road Aso B, Mararaba, Karu LGA, Nasarawa State.</p>
+                            <span class="block text-xs font-semibold text-emerald-600 mt-1"><i class="fa-brands fa-whatsapp mr-1"></i> 09070732844</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 pt-2">
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand-blue hover:border-brand-blue transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand-blue hover:border-brand-blue transition-all"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center text-slate-500 hover:text-brand-blue hover:border-brand-blue transition-all"><i class="fa-brands fa-instagram"></i></a>
                 </div>
             </div>
-            <a href="index.html" class="inline-block bg-brand-blue text-white font-bold px-8 py-3.5 rounded-xl hover:bg-brand-darkblue transition-all shadow">
-                <i class="fa-solid fa-house mr-2"></i> Back to EESP Website
-            </a>
+
+            <div class="lg:col-span-7 reveal-right space-y-4">
+                <div class="w-full h-64 bg-slate-200 rounded-2xl border border-slate-300 overflow-hidden relative shadow-inner">
+                    <div class="absolute inset-0 bg-cover bg-center opacity-70 mix-blend-multiply" style="background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=800');"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+                    <div class="absolute bottom-4 left-4 glassmorphism p-3 rounded-xl border max-w-xs shadow-md">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-brand-darkblue block"><i class="fa-solid fa-location-crosshairs mr-1 text-red-500"></i> FCT Abuja HQ</span>
+                        <span class="text-[9px] text-slate-500 block mt-0.5">Kurudu, FCT Abuja</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm" x-data="{ contactMsg: '', sending: false }" @submit.prevent="sending = true; setTimeout(() => { contactMsg = 'success'; sending = false }, 1200)">
+                    <form class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-semibold text-slate-600">
+                        <div class="space-y-1">
+                            <label>Full Name</label>
+                            <input type="text" class="w-full border rounded-xl px-4 py-2.5 font-normal focus:outline-none focus:ring-2 focus:ring-brand-blue">
+                        </div>
+                        <div class="space-y-1">
+                            <label>Email Address</label>
+                            <input type="email" class="w-full border rounded-xl px-4 py-2.5 font-normal focus:outline-none focus:ring-2 focus:ring-brand-blue">
+                        </div>
+                        <div class="sm:col-span-2 space-y-1">
+                            <label>Message</label>
+                            <textarea rows="3" class="w-full border rounded-xl px-4 py-2.5 font-normal focus:outline-none focus:ring-2 focus:ring-brand-blue"></textarea>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <button type="submit" :disabled="sending" class="bg-brand-blue text-white px-6 py-2.5 rounded-xl font-bold hover:bg-brand-darkblue shadow transition-all disabled:opacity-60">
+                                <i class="fa-solid fa-spinner animate-spin mr-2" x-show="sending"></i>
+                                Send Message
+                            </button>
+                        </div>
+                        <div x-show="contactMsg === 'success'" class="sm:col-span-2 p-3 bg-blue-50 text-brand-blue text-center rounded-xl font-medium">
+                            Message sent successfully.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ADMIN PANEL ==================== -->
+    <!-- ==================== ADMIN MODAL ==================== -->
+    <div x-show="adminOpen" x-transition class="fixed inset-0 z-50 flex items-start justify-center modal-bg p-4 pt-6 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl mb-8">
+
+            <!-- Admin Login -->
+            <div x-show="!adminAuthed" class="max-w-sm mx-auto space-y-4 py-12 px-6">
+                <div class="text-center space-y-2">
+                    <div class="w-16 h-16 bg-brand-darkblue rounded-2xl flex items-center justify-center text-white mx-auto text-3xl"><i class="fa-solid fa-lock"></i></div>
+                    <h2 class="text-xl font-black text-brand-darkblue">Admin Portal</h2>
+                    <p class="text-xs text-slate-400">Enter your admin password to access the dashboard</p>
+                </div>
+                <input type="password" x-model="adminKey" @keydown.enter="verifyAdmin()" placeholder="Enter admin secret key" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-brand-blue focus:outline-none">
+                <button @click="verifyAdmin()" class="w-full bg-brand-blue text-white py-3.5 rounded-xl font-bold hover:bg-brand-darkblue transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-spinner animate-spin" x-show="adminLoading"></i>
+                    <span x-text="adminLoading ? 'Verifying...' : 'Access Dashboard'"></span>
+                </button>
+                <p class="text-xs text-red-500 text-center font-medium" x-show="adminError" x-text="adminError"></p>
+                <button @click="adminOpen = false" class="w-full text-xs text-slate-400 hover:text-slate-600 py-2">Cancel</button>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div x-show="adminAuthed" class="p-4 md:p-8 space-y-6">
+
+                <!-- Header -->
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-brand-darkblue rounded-xl flex items-center justify-center text-white"><i class="fa-solid fa-gauge-high"></i></div>
+                        <div>
+                            <h2 class="text-lg md:text-xl font-black text-brand-darkblue">EESP Admin Dashboard</h2>
+                            <p class="text-xs text-slate-400">School registrations, payments & membership tracker</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button @click="loadAdminData()" class="text-xs text-brand-blue font-bold bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100 transition-all"><i class="fa-solid fa-rotate mr-1"></i> Refresh</button>
+                        <button @click="adminOpen = false; adminAuthed = false; adminKey = ''" class="text-xs font-bold text-slate-400 hover:text-red-500 bg-slate-100 px-3 py-1.5 rounded-lg transition-colors"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-blue-400 block mb-1">Total Registered</span>
+                        <span class="text-3xl font-black text-brand-blue block" x-text="adminStats?.total_forms || 0"></span>
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-400 block mb-1">Have Paid</span>
+                        <span class="text-3xl font-black text-emerald-600 block" x-text="adminStats?.paid_forms || 0"></span>
+                    </div>
+                    <div class="bg-red-50 border border-red-100 p-4 rounded-xl">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-red-400 block mb-1">Not Yet Paid</span>
+                        <span class="text-3xl font-black text-red-500 block" x-text="adminStats?.unpaid_forms || 0"></span>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-amber-400 block mb-1">Total Revenue</span>
+                        <span class="text-lg font-black text-amber-600 block" x-text="'₦' + ((adminStats?.total_revenue_kobo || 0) / 100).toLocaleString()"></span>
+                    </div>
+                </div>
+
+                <!-- Forms Table -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-sm text-brand-darkblue uppercase tracking-wider"><i class="fa-solid fa-school mr-2"></i> School Registrations</h4>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full min-w-[750px] text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-500 uppercase tracking-wider font-bold border-b text-[10px]">
+                                    <th class="p-3">ID</th>
+                                    <th class="p-3">School Name</th>
+                                    <th class="p-3">Proprietor</th>
+                                    <th class="p-3">State/LGA</th>
+                                    <th class="p-3">Phone</th>
+                                    <th class="p-3">Payment</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y font-medium text-slate-700">
+                                <template x-for="form in adminForms" :key="form.id">
+                                    <tr class="hover:bg-slate-50">
+                                        <td class="p-3 text-slate-400 font-mono" x-text="'#' + form.id"></td>
+                                        <td class="p-3">
+                                            <span class="font-bold text-slate-800 block" x-text="form.school_name || '—'"></span>
+                                            <span class="text-slate-400 text-[10px]" x-text="form.nature_of_school || ''"></span>
+                                        </td>
+                                        <td class="p-3">
+                                            <span class="block font-semibold" x-text="form.proprietor_name || '—'"></span>
+                                            <span class="text-slate-400 text-[10px]" x-text="form.email || ''"></span>
+                                        </td>
+                                        <td class="p-3">
+                                            <span class="block" x-text="form.state || '—'"></span>
+                                            <span class="text-slate-400 text-[10px]" x-text="form.lga || ''"></span>
+                                        </td>
+                                        <td class="p-3 text-slate-600" x-text="form.proprietor_phone || form.whatsapp || '—'"></td>
+                                        <td class="p-3">
+                                            <button @click="togglePayment(form)"
+                                                class="px-2 py-1 rounded-full font-bold text-[9px] transition-all"
+                                                :class="form.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-600 hover:bg-red-200'"
+                                                x-text="form.payment_status === 'paid' ? '✓ Paid' : '✗ Unpaid'">
+                                            </button>
+                                        </td>
+                                        <td class="p-3">
+                                            <span class="px-2 py-1 rounded-full font-bold text-[9px]"
+                                                  :class="form.status === 'approved' ? 'bg-blue-100 text-blue-700' : form.status === 'rejected' ? 'bg-slate-100 text-slate-500' : 'bg-amber-100 text-amber-700'"
+                                                  x-text="form.status"></span>
+                                        </td>
+                                        <td class="p-3">
+                                            <div class="flex items-center justify-center gap-1">
+                                                <button @click="viewForm(form)" class="bg-brand-blue text-white px-2 py-1 rounded-lg text-[10px] font-bold hover:bg-brand-darkblue transition-all">View</button>
+                                                <button @click="updateFormStatus(form.id, 'approved')" class="bg-emerald-500 text-white px-2 py-1 rounded-lg text-[10px] font-bold hover:bg-emerald-600 transition-all">✓</button>
+                                                <button @click="updateFormStatus(form.id, 'rejected')" class="bg-red-400 text-white px-2 py-1 rounded-lg text-[10px] font-bold hover:bg-red-500 transition-all">✗</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                                <tr x-show="!adminForms || adminForms.length === 0">
+                                    <td colspan="8" class="p-8 text-center text-slate-400">
+                                        <i class="fa-solid fa-inbox text-2xl mb-2 block"></i>
+                                        No registrations yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FORM DETAIL MODAL ==================== -->
+    <div x-show="viewingForm" x-transition class="fixed inset-0 z-[60] flex items-center justify-center modal-bg p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" x-show="viewingForm">
+            <div class="bg-brand-darkblue text-white p-5 rounded-t-2xl flex justify-between items-center sticky top-0">
+                <div>
+                    <h3 class="font-bold text-base" x-text="viewingForm?.school_name || 'School Details'"></h3>
+                    <p class="text-xs text-blue-200" x-text="'Submitted: ' + (viewingForm ? new Date(viewingForm.submitted_at).toLocaleDateString('en-NG') : '')"></p>
+                </div>
+                <button @click="viewingForm = null" class="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-all"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="p-6 space-y-5" x-show="viewingForm">
+                <!-- School Info -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-brand-blue uppercase tracking-wider mb-3 pb-2 border-b">School Information</h4>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div><span class="text-slate-400 block">School Name</span><span class="font-bold text-slate-800" x-text="viewingForm?.school_name || '—'"></span></div>
+                        <div><span class="text-slate-400 block">Nature of School</span><span class="font-bold text-slate-800" x-text="viewingForm?.nature_of_school || '—'"></span></div>
+                        <div class="col-span-2"><span class="text-slate-400 block">Address</span><span class="font-bold text-slate-800" x-text="viewingForm?.school_address || '—'"></span></div>
+                        <div><span class="text-slate-400 block">Year Established</span><span class="font-bold text-slate-800" x-text="viewingForm?.year_established || '—'"></span></div>
+                        <div><span class="text-slate-400 block">LGA</span><span class="font-bold text-slate-800" x-text="viewingForm?.lga || '—'"></span></div>
+                        <div><span class="text-slate-400 block">State</span><span class="font-bold text-slate-800" x-text="viewingForm?.state || '—'"></span></div>
+                        <div><span class="text-slate-400 block">Email</span><span class="font-bold text-slate-800" x-text="viewingForm?.email || '—'"></span></div>
+                        <div><span class="text-slate-400 block">WhatsApp</span><span class="font-bold text-slate-800" x-text="viewingForm?.whatsapp || '—'"></span></div>
+                    </div>
+                </div>
+
+                <!-- Proprietor -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-brand-blue uppercase tracking-wider mb-3 pb-2 border-b">Proprietor Details</h4>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div><span class="text-slate-400 block">Name</span><span class="font-bold text-slate-800" x-text="viewingForm?.proprietor_name || '—'"></span></div>
+                        <div><span class="text-slate-400 block">Phone</span><span class="font-bold text-slate-800" x-text="viewingForm?.proprietor_phone || '—'"></span></div>
+                    </div>
+                </div>
+
+                <!-- Enrollment -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-brand-blue uppercase tracking-wider mb-3 pb-2 border-b">Student Enrollment</h4>
+                    <div class="space-y-2 text-xs">
+                        <div class="bg-slate-50 rounded-lg p-3">
+                            <span class="font-bold text-slate-600 block mb-2">Nursery</span>
+                            <div class="grid grid-cols-5 gap-2 text-center">
+                                <div><span class="text-slate-400 block text-[10px]">KG1</span><span class="font-bold" x-text="(viewingForm?.kg1_m||0) + 'M / ' + (viewingForm?.kg1_f||0) + 'F'"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">KG2</span><span class="font-bold" x-text="(viewingForm?.kg2_m||0) + 'M / ' + (viewingForm?.kg2_f||0) + 'F'"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">N1</span><span class="font-bold" x-text="(viewingForm?.n1_m||0) + 'M / ' + (viewingForm?.n1_f||0) + 'F'"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">N2</span><span class="font-bold" x-text="(viewingForm?.n2_m||0) + 'M / ' + (viewingForm?.n2_f||0) + 'F'"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">N3</span><span class="font-bold" x-text="(viewingForm?.n3_m||0) + 'M / ' + (viewingForm?.n3_f||0) + 'F'"></span></div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 rounded-lg p-3">
+                            <span class="font-bold text-slate-600 block mb-2">Primary</span>
+                            <div class="grid grid-cols-6 gap-2 text-center">
+                                <div><span class="text-slate-400 block text-[10px]">P1</span><span class="font-bold" x-text="(viewingForm?.p1_m||0) + '/' + (viewingForm?.p1_f||0)"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">P2</span><span class="font-bold" x-text="(viewingForm?.p2_m||0) + '/' + (viewingForm?.p2_f||0)"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">P3</span><span class="font-bold" x-text="(viewingForm?.p3_m||0) + '/' + (viewingForm?.p3_f||0)"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">P4</span><span class="font-bold" x-text="(viewingForm?.p4_m||0) + '/' + (viewingForm?.p4_f||0)"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">P5</span><span class="font-bold" x-text="(viewingForm?.p5_m||0) + '/' + (viewingForm?.p5_f||0)"></span></div>
+                                <div><span class="text-slate-400 block text-[10px]">P6</span><span class="font-bold" x-text="(viewingForm?.p6_m||0) + '/' + (viewingForm?.p6_f||0)"></span></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <span class="font-bold text-slate-600 block mb-2">Junior Secondary</span>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div><span class="text-slate-400 block text-[10px]">JSS1</span><span class="font-bold" x-text="(viewingForm?.jss1_m||0) + '/' + (viewingForm?.jss1_f||0)"></span></div>
+                                    <div><span class="text-slate-400 block text-[10px]">JSS2</span><span class="font-bold" x-text="(viewingForm?.jss2_m||0) + '/' + (viewingForm?.jss2_f||0)"></span></div>
+                                    <div><span class="text-slate-400 block text-[10px]">JSS3</span><span class="font-bold" x-text="(viewingForm?.jss3_m||0) + '/' + (viewingForm?.jss3_f||0)"></span></div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <span class="font-bold text-slate-600 block mb-2">Senior Secondary</span>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div><span class="text-slate-400 block text-[10px]">SS1</span><span class="font-bold" x-text="(viewingForm?.ss1_m||0) + '/' + (viewingForm?.ss1_f||0)"></span></div>
+                                    <div><span class="text-slate-400 block text-[10px]">SS2</span><span class="font-bold" x-text="(viewingForm?.ss2_m||0) + '/' + (viewingForm?.ss2_f||0)"></span></div>
+                                    <div><span class="text-slate-400 block text-[10px]">SS3</span><span class="font-bold" x-text="(viewingForm?.ss3_m||0) + '/' + (viewingForm?.ss3_f||0)"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-brand-blue uppercase tracking-wider mb-3 pb-2 border-b">Professional Registration</h4>
+                    <div class="flex gap-3 text-xs">
+                        <span :class="viewingForm?.reg_cac ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'" class="px-3 py-1.5 rounded-full font-bold">CAC <i :class="viewingForm?.reg_cac ? 'fa-check' : 'fa-xmark'" class="fa-solid ml-1"></i></span>
+                        <span :class="viewingForm?.reg_state ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'" class="px-3 py-1.5 rounded-full font-bold">State Mode <i :class="viewingForm?.reg_state ? 'fa-check' : 'fa-xmark'" class="fa-solid ml-1"></i></span>
+                        <span :class="viewingForm?.reg_napps ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'" class="px-3 py-1.5 rounded-full font-bold">NAPPS <i :class="viewingForm?.reg_napps ? 'fa-check' : 'fa-xmark'" class="fa-solid ml-1"></i></span>
+                    </div>
+                </div>
+
+                <!-- Payment -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-brand-blue uppercase tracking-wider mb-3 pb-2 border-b">Payment Info</h4>
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div><span class="text-slate-400 block">Reference</span><span class="font-bold font-mono text-slate-800" x-text="viewingForm?.payment_reference || '—'"></span></div>
+                        <div><span class="text-slate-400 block">Amount Paid</span><span class="font-bold text-emerald-600" x-text="viewingForm?.amount ? '₦' + (viewingForm.amount / 100).toLocaleString() : '—'"></span></div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="space-y-3 pt-2 border-t">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Payment Status</p>
+                        <button @click="togglePayment(viewingForm)"
+                            class="w-full py-2.5 rounded-xl font-bold text-sm transition-all"
+                            :class="viewingForm?.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-600 hover:bg-red-200'"
+                            x-text="viewingForm?.payment_status === 'paid' ? '✓ Marked as Paid — Click to mark Unpaid' : '✗ Not Paid — Click to mark as Paid'">
+                        </button>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Application Status</p>
+                        <div class="flex gap-2">
+                            <button @click="updateFormStatus(viewingForm.id, 'approved'); viewingForm.status = 'approved'" class="flex-1 bg-emerald-500 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all">✓ Approve</button>
+                            <button @click="updateFormStatus(viewingForm.id, 'rejected'); viewingForm.status = 'rejected'" class="flex-1 bg-red-400 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-red-500 transition-all">✗ Reject</button>
+                            <button @click="viewingForm = null" class="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-slate-950 text-slate-400 text-xs py-16 border-t border-white/5 relative z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+            <div class="space-y-4">
+                <span class="text-lg font-black tracking-tight text-white block">EFEWO EDUCATION SUPPORT PROJECT</span>
+                <p class="text-slate-500 font-light leading-relaxed">Formal structured educational interventions driving administrative transparency, asset matching security, and student advancement support systems inside Nigeria.</p>
+            </div>
+            <div class="space-y-3">
+                <span class="text-sm font-bold text-white uppercase tracking-wider block">Intervention Nodes</span>
+                <ul class="space-y-2 font-light text-slate-400">
+                    <li><a href="#execution" class="hover:text-white transition-colors">School Project Execution</a></li>
+                    <li><a href="#exams" class="hover:text-white transition-colors">External Examination Ledger</a></li>
+                    <li><a href="#programs" class="hover:text-white transition-colors">Assessments Matrix</a></li>
+                    <li><a href="#membership" class="hover:text-white transition-colors">Membership Registration</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3">
+                <span class="text-sm font-bold text-white uppercase tracking-wider block">Operational Compliance</span>
+                <ul class="space-y-2 font-light text-slate-400">
+                    <li><a href="#" class="hover:text-white transition-colors">Privacy Allocation Directives</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Audited Transparency Ledger</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Terms of Counterpart Funding</a></li>
+                </ul>
+            </div>
+            <div class="space-y-3" x-data="{ nl: '' }">
+                <span class="text-sm font-bold text-white uppercase tracking-wider block">Newsletter</span>
+                <p class="text-slate-500 font-light leading-relaxed mb-2">Subscribe to track quarterly physical milestone completions and open audit declarations.</p>
+                <form @submit.prevent="nl = 'success'" class="flex rounded-xl overflow-hidden border border-white/10 bg-white/5">
+                    <input type="email" required placeholder="Your email address" class="w-full px-3 py-2 text-xs bg-transparent border-0 text-white focus:outline-none placeholder-slate-600">
+                    <button type="submit" class="bg-brand-blue text-white px-4 font-bold hover:bg-brand-darkblue transition-colors shrink-0"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+                <div x-show="nl === 'success'" class="text-[10px] text-emerald-400 font-medium">Subscribed successfully.</div>
+            </div>
         </div>
 
-    </main>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4 text-slate-600 text-[11px]">
+            <span>&copy; 2026 Efewo Education Support Project (EESP). All Rights Reserved.</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-brand-gold"></i> Certified Accountancy Framework Active</span>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/2349070732844" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl group transition-all duration-300 transform hover:scale-110">
+        <i class="fa-brands fa-whatsapp animate-pulse"></i>
+        <span class="absolute right-16 bg-slate-900 text-white text-[10px] font-bold uppercase px-2.5 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow border border-white/10 pointer-events-none">WhatsApp EESP</span>
+    </a>
 
     <script>
-        const API_BASE = 'https://efewo-backend.onrender.com/api';
-        const FORMSPREE = 'https://formspree.io/f/mrewbbko';
+        // ====== CONFIG — UPDATE THESE ======
+        const API_BASE = 'https://efewo-backend.onrender.com/api'; // ← your Render backend URL
+        const PAYSTACK_PUBLIC_KEY = 'pk_live_xxxxxxxxxxxxxxxxxxxx';   // ← your Paystack public key
+        // ====================================
+        function eespApp() {
+            return {
+                // Donation
+                donAmount: '10000',
+                donCustomAmount: '',
+                donPlan: 'once',
+                donEmail: '',
+                donLoading: false,
+                donError: '',
 
-        let paymentRef = '';
-        let userEmail = '';
+                setDonAmount(val) {
+                    this.donAmount = val;
+                    this.donCustomAmount = '';
+                },
 
-        function init() {
-            const params = new URLSearchParams(window.location.search);
-            paymentRef = params.get('ref') || '';
-            userEmail = params.get('email') || '';
-            if (userEmail) {
-                document.getElementById('form-email').value = userEmail;
-            }
-        }
+                donate() {
+                    this.donError = '';
+                    if (!this.donEmail) { this.donError = 'Please enter your email.'; return; }
+                    const amt = this.donCustomAmount ? parseInt(this.donCustomAmount) : parseInt(this.donAmount);
+                    if (!amt || amt < 100) { this.donError = 'Please enter a valid amount.'; return; }
+                    this.donLoading = true;
+                    const self = this;
+                    PaystackPop.setup({
+                        key: PAYSTACK_PUBLIC_KEY,
+                        email: self.donEmail,
+                        amount: amt * 100,
+                        currency: 'NGN',
+                        ref: 'DON-' + Date.now(),
+                        metadata: { payment_type: 'donation' },
+                        onSuccess: function() { self.donLoading = false; alert('Thank you! EESP is grateful for your donation.'); },
+                        onCancel: function() { self.donLoading = false; self.donError = 'Payment cancelled.'; }
+                    }).openIframe();
+                },
 
-        function applyManualRef() {}
+                // Membership flow
+                memberStep: 1,
+                formEmail: '',
+                paymentRef: '',
+                manualRef: '',
+                payLoading: false,
+                payError: '',
+                formLoading: false,
+                formError: '',
+                submittedFormId: null,
 
-        function showError(msg) {
-            const el = document.getElementById('form-error');
-            document.getElementById('form-error-text').textContent = msg;
-            el.classList.remove('hidden');
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+                // Yearly dues
+                duesEmail: '',
+                duesLoading: false,
+                duesError: '',
 
-        function hideError() {
-            document.getElementById('form-error').classList.add('hidden');
-        }
+                // Admin
+                adminOpen: false,
+                adminAuthed: false,
+                adminKey: '',
+                adminError: '',
+                adminLoading: false,
+                adminStats: null,
+                adminForms: [],
+                viewingForm: null,
 
-        document.getElementById('reg-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            hideError();
+                // School Registration form fields
+                mForm: {
+                    // School info
+                    school_name: '', school_address: '', year_established: '',
+                    nature_of_school: '', lga: '', state: '', email: '',
+                    whatsapp: '', proprietor_name: '', proprietor_phone: '',
+                    // Nursery enrollment
+                    kg1_m: '', kg1_f: '', kg2_m: '', kg2_f: '',
+                    n1_m: '', n1_f: '', n2_m: '', n2_f: '', n3_m: '', n3_f: '',
+                    // Primary enrollment
+                    p1_m: '', p1_f: '', p2_m: '', p2_f: '', p3_m: '', p3_f: '',
+                    p4_m: '', p4_f: '', p5_m: '', p5_f: '', p6_m: '', p6_f: '',
+                    // Secondary enrollment
+                    jss1_m: '', jss1_f: '', jss2_m: '', jss2_f: '', jss3_m: '', jss3_f: '',
+                    ss1_m: '', ss1_f: '', ss2_m: '', ss2_f: '', ss3_m: '', ss3_f: '',
+                    // Professional registration
+                    reg_cac: false, reg_state: false, reg_napps: false
+                },
 
-            const btn = document.getElementById('submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Submitting...';
+                init() {
+                    // Check if returning from Paystack redirect with reference
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const ref = urlParams.get('reference') || urlParams.get('trxref');
+                    if (ref) {
+                        this.verifyPaymentFromUrl(ref);
+                    }
+                },
 
-            const formData = new FormData(this);
-            const payload = { payment_reference: paymentRef || null };
-            formData.forEach((value, key) => {
-                if (key === 'reg_cac' || key === 'reg_state' || key === 'reg_napps') {
-                    payload[key] = true;
-                } else {
-                    payload[key] = value;
-                }
-            });
-            // Unchecked checkboxes don't appear in FormData, so default to false
-            if (!payload.reg_cac) payload.reg_cac = false;
-            if (!payload.reg_state) payload.reg_state = false;
-            if (!payload.reg_napps) payload.reg_napps = false;
-
-            try {
-                // 1. Save to backend
-                const res = await fetch(`${API_BASE}/membership/submit`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-
-                if (data.success) {
-                    // 2. Send email via Formspree
+                async verifyPaymentFromUrl(ref) {
                     try {
-                        await fetch(FORMSPREE, {
+                        const res = await fetch(`${API_BASE}/payments/verify/${ref}`);
+                        const data = await res.json();
+                        if (data.success && data.payment_type === 'form_purchase') {
+                            this.paymentRef = ref;
+                            this.formEmail = data.email;
+                            this.mForm.email = data.email;
+                            this.memberStep = 2;
+                            document.getElementById('membership').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    } catch (e) {
+                        console.error('Verify from URL failed', e);
+                    }
+                },
+
+                async payForForm() {
+                    if (!this.formEmail) return;
+                    this.payLoading = true;
+                    this.payError = '';
+                    try {
+                        const res = await fetch(`${API_BASE}/payments/initialize`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                _subject: `New EESP Registration — ${payload.school_name}`,
-                                'Form ID': '#' + data.form_id,
-                                'Payment Ref': paymentRef,
-                                'School Name': payload.school_name,
-                                'Address': payload.school_address,
-                                'Year Est.': payload.year_established,
-                                'Nature': payload.nature_of_school,
-                                'LGA': payload.lga,
-                                'State': payload.state,
-                                'Email': payload.email,
-                                'WhatsApp': payload.whatsapp,
-                                'Proprietor': payload.proprietor_name,
-                                'Proprietor Phone': payload.proprietor_phone,
-                                'CAC': payload.reg_cac ? 'Yes' : 'No',
-                                'State Reg': payload.reg_state ? 'Yes' : 'No',
-                                'NAPPS': payload.reg_napps ? 'Yes' : 'No',
-                            })
+                            body: JSON.stringify({ email: this.formEmail, payment_type: 'form_purchase' })
                         });
-                    } catch(e) { console.error('Formspree error', e); }
+                        const data = await res.json();
+                        if (data.success) {
+                            // Open Paystack inline popup
+                            const handler = PaystackPop.setup({
+                                key: PAYSTACK_PUBLIC_KEY,
+                                email: this.formEmail,
+                                amount: 500000, // ₦5,000 in kobo
+                                currency: 'NGN',
+                                ref: data.reference,
+                                metadata: { payment_type: 'form_purchase' },
+                                onSuccess: async (transaction) => {
+                                    // Verify payment then redirect to form page
+                                    const vRes = await fetch(`${API_BASE}/payments/verify/${transaction.reference}`);
+                                    const vData = await vRes.json();
+                                    if (vData.success) {
+                                        this.payLoading = false;
+                                        // Redirect to standalone form page
+                                        window.location.href = `form.html?ref=${transaction.reference}&email=${encodeURIComponent(this.formEmail)}`;
+                                    } else {
+                                        this.payError = 'Payment verification failed. Please contact support.';
+                                        this.payLoading = false;
+                                    }
+                                },
+                                onCancel: () => {
+                                    this.payLoading = false;
+                                    this.payError = 'Payment was cancelled.';
+                                }
+                            });
+                            handler.openIframe();
+                        } else {
+                            this.payError = data.message || 'Payment initialization failed.';
+                            this.payLoading = false;
+                        }
+                    } catch (e) {
+                        this.payError = 'Network error. Please try again.';
+                        this.payLoading = false;
+                    }
+                },
 
-                    // Show success
-                    document.getElementById('reg-form').classList.add('hidden');
-                    document.getElementById('success-screen').classList.remove('hidden');
-                    document.getElementById('success-form-id').textContent = '#' + data.form_id;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    showError(data.message + (data.detail ? ' — ' + data.detail : ''));
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Submit Registration Form';
+                async submitMembershipForm() {
+                    const ref = this.paymentRef || this.manualRef;
+                    if (!ref) {
+                        this.formError = 'Please enter your payment reference.';
+                        return;
+                    }
+                    this.formLoading = true;
+                    this.formError = '';
+
+                    const payload = { payment_reference: ref, ...this.mForm };
+
+                    try {
+                        // 1. Save to backend database
+                        const res = await fetch(`${API_BASE}/membership/submit`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        const data = await res.json();
+
+                        if (data.success) {
+                            this.submittedFormId = data.form_id;
+
+                            // 2. Send email notification via Formspree
+                            try {
+                                await fetch('https://formspree.io/f/mrewbbko', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        _subject: `New EESP Registration — ${this.mForm.school_name}`,
+                                        'Form ID': '#' + data.form_id,
+                                        'Payment Reference': ref,
+                                        '--- SCHOOL INFO ---': '---',
+                                        'School Name': this.mForm.school_name,
+                                        'School Address': this.mForm.school_address,
+                                        'Year Established': this.mForm.year_established,
+                                        'Nature of School': this.mForm.nature_of_school,
+                                        'LGA': this.mForm.lga,
+                                        'State': this.mForm.state,
+                                        'Email': this.mForm.email,
+                                        'WhatsApp': this.mForm.whatsapp,
+                                        '--- PROPRIETOR ---': '---',
+                                        'Proprietor Name': this.mForm.proprietor_name,
+                                        'Proprietor Phone': this.mForm.proprietor_phone,
+                                        '--- ENROLLMENT ---': '---',
+                                        'KG1 M/F': `${this.mForm.kg1_m || 0} / ${this.mForm.kg1_f || 0}`,
+                                        'KG2 M/F': `${this.mForm.kg2_m || 0} / ${this.mForm.kg2_f || 0}`,
+                                        'Nursery 1 M/F': `${this.mForm.n1_m || 0} / ${this.mForm.n1_f || 0}`,
+                                        'Nursery 2 M/F': `${this.mForm.n2_m || 0} / ${this.mForm.n2_f || 0}`,
+                                        'Nursery 3 M/F': `${this.mForm.n3_m || 0} / ${this.mForm.n3_f || 0}`,
+                                        'Primary 1 M/F': `${this.mForm.p1_m || 0} / ${this.mForm.p1_f || 0}`,
+                                        'Primary 2 M/F': `${this.mForm.p2_m || 0} / ${this.mForm.p2_f || 0}`,
+                                        'Primary 3 M/F': `${this.mForm.p3_m || 0} / ${this.mForm.p3_f || 0}`,
+                                        'Primary 4 M/F': `${this.mForm.p4_m || 0} / ${this.mForm.p4_f || 0}`,
+                                        'Primary 5 M/F': `${this.mForm.p5_m || 0} / ${this.mForm.p5_f || 0}`,
+                                        'Primary 6 M/F': `${this.mForm.p6_m || 0} / ${this.mForm.p6_f || 0}`,
+                                        'JSS1 M/F': `${this.mForm.jss1_m || 0} / ${this.mForm.jss1_f || 0}`,
+                                        'JSS2 M/F': `${this.mForm.jss2_m || 0} / ${this.mForm.jss2_f || 0}`,
+                                        'JSS3 M/F': `${this.mForm.jss3_m || 0} / ${this.mForm.jss3_f || 0}`,
+                                        'SS1 M/F': `${this.mForm.ss1_m || 0} / ${this.mForm.ss1_f || 0}`,
+                                        'SS2 M/F': `${this.mForm.ss2_m || 0} / ${this.mForm.ss2_f || 0}`,
+                                        'SS3 M/F': `${this.mForm.ss3_m || 0} / ${this.mForm.ss3_f || 0}`,
+                                        '--- REGISTRATION ---': '---',
+                                        'CAC': this.mForm.reg_cac ? 'Yes' : 'No',
+                                        'State Mode': this.mForm.reg_state ? 'Yes' : 'No',
+                                        'NAPPS': this.mForm.reg_napps ? 'Yes' : 'No',
+                                    })
+                                });
+                            } catch(e) {
+                                // Formspree failure doesn't block success
+                                console.error('Formspree error:', e);
+                            }
+
+                            this.memberStep = 3;
+                        } else {
+                            this.formError = data.message || 'Submission failed. Please try again.';
+                        }
+                    } catch (e) {
+                        this.formError = 'Network error. Please try again.';
+                    }
+                    this.formLoading = false;
+                },
+
+                async payDues() {
+                    if (!this.duesEmail) {
+                        this.duesError = 'Please enter your email.';
+                        return;
+                    }
+                    this.duesLoading = true;
+                    this.duesError = '';
+                    try {
+                        const res = await fetch(`${API_BASE}/payments/initialize`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: this.duesEmail, payment_type: 'yearly_dues' })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            const handler = PaystackPop.setup({
+                                key: PAYSTACK_PUBLIC_KEY,
+                                email: this.duesEmail,
+                                amount: 1000000, // ₦10,000 in kobo
+                                currency: 'NGN',
+                                ref: data.reference,
+                                onSuccess: async (transaction) => {
+                                    await fetch(`${API_BASE}/payments/verify/${transaction.reference}`);
+                                    alert('Yearly dues payment successful! Your membership is now active for the year.');
+                                    this.duesLoading = false;
+                                },
+                                onCancel: () => {
+                                    this.duesError = 'Payment cancelled.';
+                                    this.duesLoading = false;
+                                }
+                            });
+                            handler.openIframe();
+                        } else {
+                            this.duesError = data.message;
+                            this.duesLoading = false;
+                        }
+                    } catch (e) {
+                        this.duesError = 'Network error. Try again.';
+                        this.duesLoading = false;
+                    }
+                },
+
+                viewForm(form) {
+                    this.viewingForm = form;
+                },
+
+                async verifyAdmin() {
+                    this.adminError = '';
+                    this.adminLoading = true;
+                    try {
+                        // First ping to verify key
+                        const pingRes = await fetch(`${API_BASE}/membership/ping`, {
+                            headers: { 'x-admin-key': this.adminKey.trim() }
+                        });
+                        const pingData = await pingRes.json();
+
+                        if (pingData.success) {
+                            // Key correct — now load full dashboard
+                            const statsRes = await fetch(`${API_BASE}/membership/stats`, {
+                                headers: { 'x-admin-key': this.adminKey.trim() }
+                            });
+                            const statsData = await statsRes.json();
+                            this.adminAuthed = true;
+                            if (statsData.success) this.adminStats = statsData.stats;
+                            await this.loadAdminData();
+                        } else {
+                            this.adminError = pingData.message === 'ADMIN_SECRET_KEY not set on server'
+                                ? 'Admin password not configured. Please set it up first.'
+                                : 'Incorrect password. Please try again.';
+                        }
+                    } catch (e) {
+                        this.adminError = 'Connection failed. Please try again.';
+                    }
+                    this.adminLoading = false;
+                },
+
+                async loadAdminData() {
+                    try {
+                        const [statsRes, formsRes] = await Promise.all([
+                            fetch(`${API_BASE}/membership/stats`, { headers: { 'x-admin-key': this.adminKey } }),
+                            fetch(`${API_BASE}/membership/all`, { headers: { 'x-admin-key': this.adminKey } })
+                        ]);
+                        const statsData = await statsRes.json();
+                        const formsData = await formsRes.json();
+                        if (statsData.success) this.adminStats = statsData.stats;
+                        if (formsData.success) this.adminForms = formsData.forms;
+                    } catch (e) {
+                        console.error('Failed to load admin data', e);
+                    }
+                },
+
+                async togglePayment(form) {
+                    const newStatus = form.payment_status === 'paid' ? 'unpaid' : 'paid';
+                    try {
+                        await fetch(`${API_BASE}/membership/${form.id}/status`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json', 'x-admin-key': this.adminKey },
+                            body: JSON.stringify({ payment_status: newStatus })
+                        });
+                        form.payment_status = newStatus;
+                        await this.loadAdminData();
+                    } catch(e) { alert('Update failed'); }
+                },
+
+                async updateFormStatus(id, status) {
+                    try {
+                        await fetch(`${API_BASE}/membership/${id}/status`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-admin-key': this.adminKey
+                            },
+                            body: JSON.stringify({ status })
+                        });
+                        await this.loadAdminData();
+                    } catch (e) {
+                        alert('Update failed');
+                    }
                 }
-            } catch(e) {
-                showError('Network error. Please check your connection and try again.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i> Submit Registration Form';
-            }
-        });
+            };
+        }
 
-        init();
+        // ScrollReveal
+        ScrollReveal({ reset: false, distance: '40px', duration: 900, delay: 150 });
+        ScrollReveal().reveal('.reveal-up', { origin: 'bottom' });
+        ScrollReveal().reveal('.reveal-left', { origin: 'left' });
+        ScrollReveal().reveal('.reveal-right', { origin: 'right' });
+
+        // ===== DONATION WIDGET (pure vanilla JS) =====
+        let donSelectedAmount = '10000';
+
+        function donSelectPlan(plan) {
+            document.getElementById('don-plan-once').className = 'flex-1 py-2 rounded-lg text-center transition-colors ' + (plan === 'once' ? 'bg-blue-600 text-white' : 'text-slate-600');
+            document.getElementById('don-plan-monthly').className = 'flex-1 py-2 rounded-lg text-center transition-colors ' + (plan === 'monthly' ? 'bg-blue-600 text-white' : 'text-slate-600');
+        }
+
+        function donSelectAmount(val) {
+            donSelectedAmount = val;
+            document.getElementById('don-custom').value = '';
+            ['5000','10000','25000'].forEach(a => {
+                const btn = document.getElementById('don-amt-' + a);
+                if (a === val) {
+                    btn.className = 'border border-blue-600 bg-blue-50 text-blue-700 font-bold py-3 rounded-xl text-xs text-center transition-all';
+                } else {
+                    btn.className = 'border border-slate-200 py-3 rounded-xl text-xs text-center transition-all hover:border-blue-400';
+                }
+            });
+        }
+
+        function donClearPreset() {
+            donSelectedAmount = '';
+            ['5000','10000','25000'].forEach(a => {
+                document.getElementById('don-amt-' + a).className = 'border border-slate-200 py-3 rounded-xl text-xs text-center transition-all hover:border-blue-400';
+            });
+        }
+
+        function donShowError(msg) {
+            const el = document.getElementById('don-error');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function donHideError() {
+            document.getElementById('don-error').classList.add('hidden');
+        }
+
+        function donSubmit() {
+            donHideError();
+            const email = document.getElementById('don-email').value.trim();
+            const custom = document.getElementById('don-custom').value.trim();
+            const amt = custom ? parseInt(custom) : parseInt(donSelectedAmount);
+
+            if (!email) { donShowError('Please enter your email address.'); return; }
+            if (!amt || amt < 100) { donShowError('Please enter a valid amount (minimum \u20a6100).'); return; }
+
+            const btn = document.getElementById('don-btn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin mr-2"></i> Opening Paystack...';
+            btn.disabled = true;
+
+            PaystackPop.setup({
+                key: PAYSTACK_PUBLIC_KEY,
+                email: email,
+                amount: amt * 100,
+                currency: 'NGN',
+                ref: 'DON-' + Date.now(),
+                metadata: { payment_type: 'donation' },
+                onSuccess: function() {
+                    btn.innerHTML = '<i class="fa-solid fa-heart mr-2"></i> Donate Securely via Paystack';
+                    btn.disabled = false;
+                    alert('Thank you! EESP is grateful for your donation.');
+                },
+                onCancel: function() {
+                    btn.innerHTML = '<i class="fa-solid fa-heart mr-2"></i> Donate Securely via Paystack';
+                    btn.disabled = false;
+                    donShowError('Payment was cancelled.');
+                }
+            }).openIframe();
+        }
+        // ===== END DONATION WIDGET =====
+
+        // Counters
+        setTimeout(() => {
+            document.querySelectorAll('[data-counter]').forEach(counter => {
+                const value = +counter.getAttribute('data-counter');
+                const speed = 200;
+                const animate = () => {
+                    const data = +counter.innerText.replace(/[^0-9]/g, '');
+                    const time = value / speed;
+                    if (data < value) {
+                        counter.innerText = Math.ceil(data + time).toLocaleString() + '+';
+                        setTimeout(animate, 1);
+                    } else {
+                        counter.innerText = value.toLocaleString() + '+';
+                    }
+                };
+                animate();
+            });
+        }, 400);
     </script>
 </body>
 </html>
