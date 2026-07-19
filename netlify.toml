@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+
+[[redirects]]
+  from = "/register"
+  to = "/form.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/form"
+  to = "/form.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/payment-callback"
+  to = "/payment-callback.html"
+  status = 200
+  force = true
